@@ -23,7 +23,7 @@ class CustomButton extends Phaser.GameObjects.Container {
         this.scene.add.existing(this)
         this.setSize(W, H)
         this.setInteractive({useHandCursor: true})
-        this.text = scene.add.text(0, -1, text,
+        this.text = scene.add.text(0, 0, text,
             {fontSize: fontSize, color: colors.text.out}).setOrigin(0.5, 0.5)
         this.container = scene.add.rectangle(0, 0, W, H)
         this.container.setStrokeStyle(0, 0xffffff)
@@ -43,7 +43,7 @@ class CustomButton extends Phaser.GameObjects.Container {
 
 class SceneTitle extends Phaser.Scene {
     constructor() {
-        super();
+        super({key: 'Title'});
     }
 
     create() {
@@ -52,13 +52,28 @@ class SceneTitle extends Phaser.Scene {
             .setColor('#000')
             .setOrigin()
         this.add.existing(new CustomButton(this, width / 4, 300, 250, 100, 'スタート', () => {
-                console.log("start")
-            }
-        ))
+            console.log("start")
+        }))
         this.add.existing(new CustomButton(this, width / 4 * 3, 300, 250, 100, 'ランキング', () => {
-                console.log("ranking")
-            }
-        ))
+            console.log("ranking")
+            this.scene.start('Ranking')
+        }))
+    }
+}
+
+class SceneRanking extends Phaser.Scene {
+    constructor() {
+        super({key: 'Ranking', active: false});
+    }
+
+    create() {
+        this.add.text(10, 10, 'ランキング')
+            .setFontSize(80)
+            .setColor('#000')
+        this.add.text(width - 150, height - 120, 'Escで\n戻る')
+            .setFontSize(50)
+            .setColor('#000')
+            .setAlign('right')
     }
 }
 
@@ -66,7 +81,7 @@ const config = {
     type: Phaser.AUTO,
     width: width,
     height: height,
-    scene: [SceneTitle],
+    scene: [SceneTitle, SceneRanking],
     backgroundColor: '#eee'
 }
 const game = new Phaser.Game(config)
