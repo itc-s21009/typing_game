@@ -1,4 +1,5 @@
 import {SCENE_PLAY} from "./scene_loader";
+import CustomText from "../custom_text";
 
 export class ScenePlay extends Phaser.Scene {
     text_timer
@@ -6,10 +7,8 @@ export class ScenePlay extends Phaser.Scene {
         super({key: SCENE_PLAY});
     }
     create() {
-        this.text_timer = this.add.text(0, 0, '')
-            .setFontFamily('Arial')
-            .setFontSize(80)
-            .setColor('#000')
+        this.text_timer = new CustomText(this, 0, 0, 'a')
+        this.add.existing(this.text_timer)
         let time = 60
         let timer_id
         const timer_task = () => {

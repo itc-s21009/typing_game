@@ -1,5 +1,6 @@
 import CustomButton from "../custom_button.js";
 import {SCENE_PLAY, SCENE_RANKING, SCENE_TITLE, WIDTH} from "./scene_loader.js";
+import CustomText from "../custom_text.js";
 
 export class SceneTitle extends Phaser.Scene {
     constructor() {
@@ -7,11 +8,7 @@ export class SceneTitle extends Phaser.Scene {
     }
 
     create() {
-        this.add.text(WIDTH / 2, 100, 'タイピング')
-            .setFontFamily('Arial')
-            .setFontSize(100)
-            .setColor('#000')
-            .setOrigin()
+        this.add.existing(new CustomText(this, WIDTH / 2, 100, 'タイピング').setAlignCenterHorizontally(true))
         this.add.existing(new CustomButton(this, WIDTH / 4, 300, 250, 100, 'スタート', () => {
             this.scene.start(SCENE_PLAY)
         }))

@@ -1,4 +1,5 @@
 import {HEIGHT, SCENE_RANKING, SCENE_TITLE, WIDTH} from "./scene_loader.js";
+import CustomText from "../custom_text";
 
 export class SceneRanking extends Phaser.Scene {
     constructor() {
@@ -6,15 +7,12 @@ export class SceneRanking extends Phaser.Scene {
     }
 
     create() {
-        this.add.text(10, 10, 'ランキング')
-            .setFontFamily('Arial')
-            .setFontSize(80)
-            .setColor('#000')
-        this.add.text(WIDTH - 150, HEIGHT - 120, 'Escで\n戻る')
-            .setFontFamily('Arial')
-            .setFontSize(50)
-            .setColor('#000')
-            .setAlign('right')
+        this.add.existing(new CustomText(this, 10, 10, 'ランキング'))
+        this.add.existing(
+            new CustomText(this, WIDTH - 150, HEIGHT - 120, 'Escで\n戻る')
+                .setAlign('right')
+                .setFontSize(50)
+        )
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.scene.start(SCENE_TITLE)
