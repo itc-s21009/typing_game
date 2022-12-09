@@ -7,9 +7,11 @@ export class SceneRanking extends Phaser.Scene {
 
     create() {
         this.add.text(10, 10, 'ランキング')
+            .setFontFamily('Arial')
             .setFontSize(80)
             .setColor('#000')
         this.add.text(WIDTH - 150, HEIGHT - 120, 'Escで\n戻る')
+            .setFontFamily('Arial')
             .setFontSize(50)
             .setColor('#000')
             .setAlign('right')

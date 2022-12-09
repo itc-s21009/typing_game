@@ -8,6 +8,7 @@ export class SceneTitle extends Phaser.Scene {
 
     create() {
         this.add.text(WIDTH / 2, 100, 'タイピング')
+            .setFontFamily('Arial')
             .setFontSize(100)
             .setColor('#000')
             .setOrigin()

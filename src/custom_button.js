@@ -22,7 +22,7 @@ export default class CustomButton extends Phaser.GameObjects.Container {
         this.setSize(W, H)
         this.setInteractive({useHandCursor: true})
         this.text = scene.add.text(0, 0, text,
-            {fontSize: fontSize, color: colors.text.out}).setOrigin(0.5, 0.5)
+            {fontSize: fontSize, color: colors.text.out, fontFamily: 'Arial'}).setOrigin(0.5, 0.5)
         this.container = scene.add.rectangle(0, 0, W, H)
         this.container.setStrokeStyle(0, 0xffffff)
         this.container.setFillStyle(colors.container.out)
