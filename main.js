@@ -1,4 +1,6 @@
 const [width, height] = [800, 500]
+const SCENE_TITLE = 'title'
+const SCENE_RANKING = 'ranking'
 
 class CustomButton extends Phaser.GameObjects.Container {
     text
@@ -43,7 +45,7 @@ class CustomButton extends Phaser.GameObjects.Container {
 
 class SceneTitle extends Phaser.Scene {
     constructor() {
-        super({key: 'Title'});
+        super({key: SCENE_TITLE});
     }
 
     create() {
@@ -56,14 +58,14 @@ class SceneTitle extends Phaser.Scene {
         }))
         this.add.existing(new CustomButton(this, width / 4 * 3, 300, 250, 100, 'ランキング', () => {
             console.log("ranking")
-            this.scene.start('Ranking')
+            this.scene.start(SCENE_RANKING)
         }))
     }
 }
 
 class SceneRanking extends Phaser.Scene {
     constructor() {
-        super({key: 'Ranking', active: false});
+        super({key: SCENE_RANKING, active: false});
     }
 
     create() {
@@ -74,6 +76,11 @@ class SceneRanking extends Phaser.Scene {
             .setFontSize(50)
             .setColor('#000')
             .setAlign('right')
+        this.input.keyboard.on('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.scene.start(SCENE_TITLE)
+            }
+        })
     }
 }
 
