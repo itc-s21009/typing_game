@@ -15,6 +15,7 @@ export class ScenePlay extends Phaser.Scene {
             if (time <= 0) {
                 this.text_timer.text = `終了`
                 clearInterval(timer_id)
+                return
             }
             this.text_timer.text = `残り${time}秒`
             time--
