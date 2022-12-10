@@ -13,7 +13,11 @@ export default class CustomText extends Phaser.GameObjects.Text {
      * @param align
      * @returns {CustomText}
      */
-    setAlignCenterHorizontally = (align) => this.setOrigin(align ? 0.5 : 1, this.originY)
+    setAlignCenterHorizontally = (align) => {
+        this.originX = align ? 0.5 : 1
+        this.updateDisplayOrigin()
+        return this
+    }
 
     /**
      * 文字を縦方向に中央揃えするかを設定する
@@ -21,5 +25,17 @@ export default class CustomText extends Phaser.GameObjects.Text {
      * @param align
      * @returns {CustomText}
      */
-    setAlignCenterVertically = (align) => this.setOrigin(this.originX, align ? 0.5 : 1)
+    setAlignCenterVertically = (align) => {
+        this.originY = align ? 0.5 : 1
+        this.updateDisplayOrigin()
+        return this
+    }
+
+    /**
+     * 文字を上下左右方向に中央揃えするかを設定する
+     * alignがtrueの場合は中央揃えにする
+     * @param align
+     * @returns {CustomText}
+     */
+    setCentered = (align) => this.setOrigin(align ? 0.5 : 1, align ? 0.5 : 1)
 }
