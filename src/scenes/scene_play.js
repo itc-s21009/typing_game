@@ -246,7 +246,7 @@ export class ScenePlay extends Phaser.Scene {
         const sentences = SENTENCES[difficulty]
         let sentence, kanaRomanMap, kanaIndex, romanInput
         this.input.keyboard.on('keydown', (e) => {
-            const d = kanaRomanMap[kanaIndex]
+            let d = kanaRomanMap[kanaIndex]
             // 今打ってる文字が最後の文字じゃなくて、「ん」で、「n」まで打ってる時
             if (kanaIndex < kanaRomanMap.length && d.kana === 'ん' && romanInput === 'n') {
                 const nextRomanChar = kanaRomanMap[kanaIndex + 1].roman[0][0]
@@ -255,7 +255,8 @@ export class ScenePlay extends Phaser.Scene {
                 if (nextRomanChar !== 'n' && nextRomanChar === e.key) {
                     // 次の文字の１文字を入力した状態で、次の文字へ
                     kanaIndex++
-                    romanInput = e.key
+                    romanInput = ''
+                    d = kanaRomanMap[kanaIndex]
                 }
             }
             const candidates = d.roman.filter(r => r.startsWith(`${romanInput}${e.key}`))
