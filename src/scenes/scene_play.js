@@ -107,7 +107,7 @@ const romans = {
     'すぅ': ['swu'],
     'すぇ': ['swe'],
     'すぉ': ['swo'],
-    'じゃ': ['zya', 'ja', 'jya'],
+    'じゃ': ['ja', 'zya', 'jya'],
     'じぃ': ['zyi', 'jyi'],
     'じゅ': ['zyu', 'ju', 'jyu'],
     'じぇ': ['zye', 'je', 'jye'],
@@ -159,11 +159,11 @@ const romans = {
     'ふゃ': ['fya'],
     'ふゅ': ['fyu'],
     'ふょ': ['fyo'],
-    'ふぁ': ['fwa', 'fa'],
-    'ふぃ': ['fwi', 'fi', 'fyi'],
+    'ふぁ': ['fa', 'fwa'],
+    'ふぃ': ['fi', 'fwi', 'fyi'],
     'ふぅ': ['fwu'],
-    'ふぇ': ['fwe', 'fe', 'fye'],
-    'ふぉ': ['fwo', 'fo'],
+    'ふぇ': ['fe', 'fwe', 'fye'],
+    'ふぉ': ['fo', 'fwo'],
     'びゃ': ['bya'],
     'びぃ': ['byi'],
     'びゅ': ['byu'],
@@ -204,6 +204,9 @@ const normal = [
     {display: 'お寿司が食べたい', kana: 'おすしがたべたい'},
     {display: 'タイピングゲーム', kana: 'たいぴんぐげーむ'},
     {display: '星のカービィ', kana: 'ほしのかーびぃ'},
+    {display: '名前はまだ無い', kana: 'なまえはまだない'},
+    {display: 'スマッシュブラザーズ', kana: 'すまっしゅぶらざーず'},
+    {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
 ]
 const hard = [
     {display: 'ハード', kana: 'はーど'}
@@ -238,10 +241,33 @@ export class ScenePlay extends Phaser.Scene {
                 .setAlign('center'))
             return
         }
-        const sentences = SENTENCES[difficulty]
-        let sentence = sentences[Math.floor(Math.random() * sentences.length)]
-        console.log(sentences)
         const kanaToRoman = (kana) => kana.split('').map(k => romans[k][0]).join('')
+        const sentences = SENTENCES[difficulty]
+        let sentence, kanaRomanMap, kanaIndex, romanInput
+        this.input.keyboard.on('keydown', (e) => {
+            const candidates = kanaRomanMap[kanaIndex].roman.filter(r => r.startsWith(`${romanInput}${e.key}`))
+            if (candidates.length > 0) {
+                romanInput += e.key
+                console.log(romanInput, candidates)
+                if (romanInput === candidates[0]) {
+                    kanaIndex++
+                    romanInput = ''
+                    console.log(`  completed: ${candidates[0]}`)
+                    if (kanaIndex === kanaRomanMap.length) {
+                        kanaIndex = 0
+                        showRandomSentence()
+                    }
+                }
+            }
+        })
+        const showRandomSentence = () => {
+            sentence = sentences[Math.floor(Math.random() * sentences.length)]
+            kanaRomanMap = sentence.kana.split('').map(k => ({kana: k, roman: romans[k]}))
+            kanaIndex = 0
+            romanInput = ''
+            this.text_roman.text = kanaToRoman(sentence.kana)
+            this.text_display.text = sentence.display
+        }
         const createTimer = () => {
             this.text_timer = new CustomText(this, 0, 0, '')
             this.add.existing(this.text_timer)
@@ -250,16 +276,16 @@ export class ScenePlay extends Phaser.Scene {
             this.add.rectangle(WIDTH / 4, HEIGHT / 2)
                 .setSize(550, HEIGHT / 4)
                 .setFillStyle(0x808080)
-            this.text_display = new CustomText(this, WIDTH / 2, HEIGHT / 2, sentence.display)
+            this.text_roman = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
                 .setOrigin(0.5, 1)
                 .setFontSize(32)
                 .setFontFamily('MS UI Gothic')
-            this.text_roman = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, kanaToRoman(sentence.kana))
+            this.text_display = new CustomText(this, WIDTH / 2, HEIGHT / 2, '')
                 .setOrigin(0.5, 1)
                 .setFontSize(32)
                 .setFontFamily('MS UI Gothic')
-            this.add.existing(this.text_display)
             this.add.existing(this.text_roman)
+            this.add.existing(this.text_display)
         }
         const startTimer = () => {
             let time = 60
@@ -278,5 +304,6 @@ export class ScenePlay extends Phaser.Scene {
         createTimer()
         startTimer()
         initTextArea()
+        showRandomSentence()
     }
 }
