@@ -200,13 +200,14 @@ const easy = [
     {display: 'イージー', kana: 'いーじー'}
 ]
 const normal = [
-    {display: '吾輩は猫である', kana: 'わがはいはねこである'},
-    {display: 'お寿司が食べたい', kana: 'おすしがたべたい'},
+    // {display: '吾輩は猫である', kana: 'わがはいはねこである'},
+    // {display: 'お寿司が食べたい', kana: 'おすしがたべたい'},
     {display: 'タイピングゲーム', kana: 'たいぴんぐげーむ'},
-    {display: '星のカービィ', kana: 'ほしのかーびぃ'},
-    {display: '名前はまだ無い', kana: 'なまえはまだない'},
-    {display: 'スマッシュブラザーズ', kana: 'すまっしゅぶらざーず'},
-    {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
+    {display: '橋本環奈', kana: 'はしもとかんな'},
+    // {display: '星のカービィ', kana: 'ほしのかーびぃ'},
+    // {display: '名前はまだ無い', kana: 'なまえはまだない'},
+    // {display: 'スマッシュブラザーズ', kana: 'すまっしゅぶらざーず'},
+    // {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
 ]
 const hard = [
     {display: 'ハード', kana: 'はーど'}
@@ -245,7 +246,19 @@ export class ScenePlay extends Phaser.Scene {
         const sentences = SENTENCES[difficulty]
         let sentence, kanaRomanMap, kanaIndex, romanInput
         this.input.keyboard.on('keydown', (e) => {
-            const candidates = kanaRomanMap[kanaIndex].roman.filter(r => r.startsWith(`${romanInput}${e.key}`))
+            const d = kanaRomanMap[kanaIndex]
+            // 今打ってる文字が最後の文字じゃなくて、「ん」で、「n」まで打ってる時
+            if (kanaIndex < kanaRomanMap.length && d.kana === 'ん' && romanInput === 'n') {
+                const nextRomanChar = kanaRomanMap[kanaIndex + 1].roman[0][0]
+                console.log(nextRomanChar)
+                // 次の文字の最初のローマ字がn以外で、それが打ったキーと一致した場合
+                if (nextRomanChar !== 'n' && nextRomanChar === e.key) {
+                    // 次の文字の１文字を入力した状態で、次の文字へ
+                    kanaIndex++
+                    romanInput = e.key
+                }
+            }
+            const candidates = d.roman.filter(r => r.startsWith(`${romanInput}${e.key}`))
             if (candidates.length > 0) {
                 romanInput += e.key
                 console.log(romanInput, candidates)
