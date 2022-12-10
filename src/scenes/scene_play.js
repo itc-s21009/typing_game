@@ -1,13 +1,20 @@
 import {SCENE_PLAY} from "./scene_loader";
 import CustomText from "../custom_text";
 
+export const DIFFICULTY = Object.freeze({
+    EASY: 0,
+    NORMAL: 1,
+    HARD: 2
+})
+
 export class ScenePlay extends Phaser.Scene {
     text_timer
     constructor() {
         super({key: SCENE_PLAY});
     }
-    create() {
-        this.text_timer = new CustomText(this, 0, 0, 'a')
+    create(data) {
+        console.log(data.difficulty)
+        this.text_timer = new CustomText(this, 0, 0, '')
         this.add.existing(this.text_timer)
         let time = 60
         let timer_id
