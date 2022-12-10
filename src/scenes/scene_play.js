@@ -203,10 +203,12 @@ const normal = [
     // {display: '吾輩は猫である', kana: 'わがはいはねこである'},
     // {display: 'お寿司が食べたい', kana: 'おすしがたべたい'},
     {display: 'タイピングゲーム', kana: 'たいぴんぐげーむ'},
-    {display: '橋本環奈', kana: 'はしもとかんな'},
+    // {display: '橋本環奈', kana: 'はしもとかんな'},
+    {display: 'ピッタンコ', kana: 'ぴったんこ'},
+    {display: 'あっいっう', kana: 'あっいっう'},
     // {display: '星のカービィ', kana: 'ほしのかーびぃ'},
     // {display: '名前はまだ無い', kana: 'なまえはまだない'},
-    // {display: 'スマッシュブラザーズ', kana: 'すまっしゅぶらざーず'},
+    {display: 'スマッシュ', kana: 'すまっしゅ'},
     // {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
 ]
 const hard = [
@@ -247,16 +249,28 @@ export class ScenePlay extends Phaser.Scene {
         let sentence, kanaRomanMap, kanaIndex, romanInput
         this.input.keyboard.on('keydown', (e) => {
             let d = kanaRomanMap[kanaIndex]
-            // 今打ってる文字が最後の文字じゃなくて、「ん」で、「n」まで打ってる時
-            if (kanaIndex < kanaRomanMap.length && d.kana === 'ん' && romanInput === 'n') {
-                const nextRomanChar = kanaRomanMap[kanaIndex + 1].roman[0][0]
-                console.log(nextRomanChar)
-                // 次の文字の最初のローマ字がn以外で、それが打ったキーと一致した場合
-                if (nextRomanChar !== 'n' && nextRomanChar === e.key) {
-                    // 次の文字の１文字を入力した状態で、次の文字へ
-                    kanaIndex++
-                    romanInput = ''
-                    d = kanaRomanMap[kanaIndex]
+            // 今打ってる文字が最後の文字じゃない場合
+            if (kanaIndex < kanaRomanMap.length - 1) {
+                const nextChar = kanaRomanMap[kanaIndex + 1]
+                console.log(nextChar)
+                const nextRomanChar = nextChar.roman[0][0]
+                // 今打ってる文字が「ん」で、「n」まで打ってる時
+                const condN = d.kana === 'ん' && romanInput === 'n'
+                // 今打ってる文字が「っ」で、次の文字が母音じゃない場合
+                const condT = d.kana === 'っ' && !'あいうえお'.split('').includes(nextChar.kana)
+                if (condN || condT) {
+                    // 次の文字の最初のローマ字がn以外で、それが打ったキーと一致した場合
+                    if (nextRomanChar !== 'n' && nextRomanChar === e.key) {
+                        kanaIndex++
+                        romanInput = ''
+                        if (condN) {
+                            // 「ん」の判定の場合は、次の文字の判定をこの先で実行する
+                            d = kanaRomanMap[kanaIndex]
+                        } else if (condT) {
+                            // 「っ」の判定の場合は、一旦処理を止める
+                            return
+                        }
+                    }
                 }
             }
             const candidates = d.roman.filter(r => r.startsWith(`${romanInput}${e.key}`))
