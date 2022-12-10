@@ -1,4 +1,4 @@
-import {SCENE_PLAY} from "./scene_loader";
+import {HEIGHT, SCENE_PLAY, SCENE_TITLE, WIDTH} from "./scene_loader";
 import CustomText from "../custom_text";
 
 export const DIFFICULTY = Object.freeze({
@@ -12,8 +12,20 @@ export class ScenePlay extends Phaser.Scene {
     constructor() {
         super({key: SCENE_PLAY});
     }
-    create(data) {
-        console.log(data.difficulty)
+    create({difficulty}) {
+        this.input.keyboard.on('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.scene.start(SCENE_TITLE)
+            }
+        })
+        if (difficulty === undefined) {
+            this.add.existing(new CustomText(this, WIDTH / 2, HEIGHT / 2, 'エラー\ndifficultyがないです')
+                .setAlignCenterVertically(true)
+                .setAlignCenterHorizontally(true)
+                .setAlign('center'))
+            return
+        }
+        console.log(difficulty)
         this.text_timer = new CustomText(this, 0, 0, '')
         this.add.existing(this.text_timer)
         let time = 60
