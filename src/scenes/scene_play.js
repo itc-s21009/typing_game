@@ -37,6 +37,11 @@ const romans = {
     'む': ['mu'],
     'め': ['me'],
     'も': ['mo'],
+    'ら': ['ra'],
+    'り': ['ri'],
+    'る': ['ru'],
+    'れ': ['re'],
+    'ろ': ['ro'],
     'や': ['ya'],
     'ゆ': ['yu'],
     'よ': ['yo'],
@@ -195,7 +200,10 @@ const easy = [
     {display: 'イージー', kana: 'いーじー'}
 ]
 const normal = [
-    {display: '吾輩は猫である', kana: 'わがはいはねこである'}
+    {display: '吾輩は猫である', kana: 'わがはいはねこである'},
+    {display: 'お寿司が食べたい', kana: 'おすしがたべたい'},
+    {display: 'タイピングゲーム', kana: 'たいぴんぐげーむ'},
+    {display: '星のカービィ', kana: 'ほしのかーびぃ'},
 ]
 const hard = [
     {display: 'ハード', kana: 'はーど'}
@@ -209,40 +217,66 @@ export const DIFFICULTY = Object.freeze({
 
 export class ScenePlay extends Phaser.Scene {
     text_timer
+    text_display
+    text_roman
 
     constructor() {
         super({key: SCENE_PLAY});
     }
 
     create({difficulty}) {
+        let timer_id
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.scene.start(SCENE_TITLE)
+                clearInterval(timer_id)
             }
         })
         if (difficulty === undefined) {
             this.add.existing(new CustomText(this, WIDTH / 2, HEIGHT / 2, 'エラー\ndifficultyがないです')
-                .setAlignCenterVertically(true)
-                .setAlignCenterHorizontally(true)
+                .setCentered(true)
                 .setAlign('center'))
             return
         }
         const sentences = SENTENCES[difficulty]
+        let sentence = sentences[Math.floor(Math.random() * sentences.length)]
         console.log(sentences)
-        this.text_timer = new CustomText(this, 0, 0, '')
-        this.add.existing(this.text_timer)
-        let time = 60
-        let timer_id
-        const timer_task = () => {
-            if (time <= 0) {
-                this.text_timer.text = `終了`
-                clearInterval(timer_id)
-                return
-            }
-            this.text_timer.text = `残り${time}秒`
-            time--
+        const kanaToRoman = (kana) => kana.split('').map(k => romans[k][0]).join('')
+        const createTimer = () => {
+            this.text_timer = new CustomText(this, 0, 0, '')
+            this.add.existing(this.text_timer)
         }
-        timer_task()
-        timer_id = setInterval(timer_task, 1000)
+        const initTextArea = () => {
+            this.add.rectangle(WIDTH / 4, HEIGHT / 2)
+                .setSize(550, HEIGHT / 4)
+                .setFillStyle(0x808080)
+            this.text_display = new CustomText(this, WIDTH / 2, HEIGHT / 2, sentence.display)
+                .setOrigin(0.5, 1)
+                .setFontSize(32)
+                .setFontFamily('MS UI Gothic')
+            this.text_roman = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, kanaToRoman(sentence.kana))
+                .setOrigin(0.5, 1)
+                .setFontSize(32)
+                .setFontFamily('MS UI Gothic')
+            this.add.existing(this.text_display)
+            this.add.existing(this.text_roman)
+        }
+        const startTimer = () => {
+            let time = 60
+            const timer_task = () => {
+                if (time <= 0) {
+                    this.text_timer.text = `終了`
+                    clearInterval(timer_id)
+                    return
+                }
+                this.text_timer.text = `残り${time}秒`
+                time--
+            }
+            timer_task()
+            timer_id = setInterval(timer_task, 1000)
+        }
+        createTimer()
+        startTimer()
+        initTextArea()
     }
 }
