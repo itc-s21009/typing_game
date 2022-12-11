@@ -207,23 +207,23 @@ const easy = [
     {display: 'イージー', kana: 'いーじー'}
 ]
 const normal = [
-    // {display: '吾輩は猫である', kana: 'わがはいはねこである'},
-    // {display: 'お寿司が食べたい', kana: 'おすしがたべたい'},
-    // {display: 'タイピングゲーム', kana: 'たいぴんぐげーむ'},
-    // {display: '朱色', kana: 'しゅいろ'},
-    // {display: '橋本環奈', kana: 'はしもとかんな'},
-    // {display: 'ピッタンコ', kana: 'ぴったんこ'},
-    // {display: 'あっいっう', kana: 'あっいっう'},
-    // {display: '星のカービィ', kana: 'ほしのかーびぃ'},
-    // {display: '名前はまだ無い', kana: 'なまえはまだない'},
-    // {display: 'スマッシュ', kana: 'すまっしゅ'},
-    // {display: 'やっふー', kana: 'やっふー'},
+    {display: '吾輩は猫である', kana: 'わがはいはねこである'},
+    {display: 'お寿司が食べたい', kana: 'おすしがたべたい'},
+    {display: 'タイピングゲーム', kana: 'たいぴんぐげーむ'},
+    {display: '朱色', kana: 'しゅいろ'},
+    {display: '橋本環奈', kana: 'はしもとかんな'},
+    {display: 'ピッタンコ', kana: 'ぴったんこ'},
+    {display: 'あっいっう', kana: 'あっいっう'},
+    {display: '星のカービィ', kana: 'ほしのかーびぃ'},
+    {display: '名前はまだ無い', kana: 'なまえはまだない'},
+    {display: 'スマッシュ', kana: 'すまっしゅ'},
+    {display: 'やっふー', kana: 'やっふー'},
     {display: 'かっこいい', kana: 'かっこいい'},
     {display: 'あっ、福山雅治だ！', kana: 'あっ、ふくやままさはるだ'},
-    // {display: '東京特許許可局局長', kana: 'とうきょうとっきょきょかきょくきょくちょう'},
-    // {display: 'あっつい', kana: 'あっつい'},
-    // {display: 'ふぉっふぉっふぉ', kana: 'ふぉっふぉっふぉ'},
-    // {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
+    {display: '東京特許許可局局長', kana: 'とうきょうとっきょきょかきょくきょくちょう'},
+    {display: 'あっつい', kana: 'あっつい'},
+    {display: 'ふぉっふぉっふぉ', kana: 'ふぉっふぉっふぉ'},
+    {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
 ]
 const hard = [
     {display: 'ハード', kana: 'はーど'}
@@ -330,7 +330,7 @@ export class ScenePlay extends Phaser.Scene {
             }
         }
         this.input.keyboard.on('keydown', (e) => {
-            if (time <= 0) {
+            if (time < 0) {
                 return
             }
             typeCount++
@@ -420,7 +420,6 @@ export class ScenePlay extends Phaser.Scene {
         }
         const startTimer = () => {
             const timer_task = () => {
-                time--
                 if (time <= 0) {
                     this.text_timer.text = `終了`
                     this.text_display.text = '終了'
@@ -428,10 +427,11 @@ export class ScenePlay extends Phaser.Scene {
                     this.text_display.color = 0x0000ff
                     this.text_roman.color = 0x0000ff
                     clearInterval(timer_id)
-                    return
+                } else {
+                    this.text_timer.text = `残り${time}秒`
+                    updateStats()
                 }
-                this.text_timer.text = `残り${time}秒`
-                updateStats()
+                time--
             }
             timer_task()
             timer_id = setInterval(timer_task, 1000)
