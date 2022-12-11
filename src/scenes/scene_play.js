@@ -215,9 +215,9 @@ const normal = [
     // {display: '星のカービィ', kana: 'ほしのかーびぃ'},
     // {display: '名前はまだ無い', kana: 'なまえはまだない'},
     // {display: 'スマッシュ', kana: 'すまっしゅ'},
-    {display: 'やっふー', kana: 'やっふー'},
+    // {display: 'やっふー', kana: 'やっふー'},
     {display: 'かっこいい', kana: 'かっこいい'},
-    {display: '東京特許許可局局長', kana: 'とうきょうとっきょきょかきょくきょくちょう'},
+    // {display: '東京特許許可局局長', kana: 'とうきょうとっきょきょかきょくきょくちょう'},
     // {display: 'あっつい', kana: 'あっつい'},
     // {display: 'ふぉっふぉっふぉ', kana: 'ふぉっふぉっふぉ'},
     // {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
@@ -287,8 +287,8 @@ export class ScenePlay extends Phaser.Scene {
         let inputForSentence    // 出題中の文章に対して、どんなキーで正しく打ったか
         let charForT            // 「kko(っこ)」のように重ねて入力する場合、何を重ねたかの記録用（この場合はk）
         const checkByCandidates = (candidates, key) => {
-            // 2文字目以降で、前の文字が「っ」の場合
-            if (kanaIndex > 0 && kanaRomanMap[kanaIndex - 1].kana === 'っ') {
+            // 2文字目以降で、前の文字が「っ」で、重ねる入力方法をしていた場合
+            if (kanaIndex > 0 && charForT !== '' && kanaRomanMap[kanaIndex - 1].kana === 'っ') {
                 // 前回重ねた文字を使った打ち方のみ残す
                 // 「hhu(っふ)」を「f」で重ねた場合、
                 // ['hu', 'fu']から'fu'だけを残す
@@ -303,6 +303,7 @@ export class ScenePlay extends Phaser.Scene {
                 if (romanInput === candidates[0]) {
                     kanaIndex++
                     romanInput = ''
+                    charForT = ''
                     console.log(`  completed: ${candidates[0]}`)
                 }
                 if (kanaIndex === kanaRomanMap.length) {
