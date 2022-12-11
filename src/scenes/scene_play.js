@@ -239,6 +239,7 @@ export class ScenePlay extends Phaser.Scene {
     text_timer
     text_display
     text_roman
+    text_stats
 
     constructor() {
         super({key: SCENE_PLAY});
@@ -246,6 +247,8 @@ export class ScenePlay extends Phaser.Scene {
 
     create({difficulty}) {
         let timer_id
+        const time_start = 60
+        let time = time_start
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.scene.start(SCENE_TITLE)
@@ -257,6 +260,15 @@ export class ScenePlay extends Phaser.Scene {
                 .setCentered(true)
                 .setAlign('center'))
             return
+        }
+        let typeCount = 0       // 全入力回数
+        let correctCount = 0    // 正しい入力回数
+        const updateStats = () => {
+            const miss = typeCount - correctCount
+            const accuracy = Math.round(correctCount / typeCount * 100 * 10) / 10
+            const keysPerSecond = Math.round(correctCount / (time_start - time) * 10) / 10
+            const score = Math.round(correctCount * keysPerSecond * (accuracy / 100))
+            this.text_stats.text = `(後で消す)\nミス数: ${miss}\n正確率: ${accuracy}%\nキー/秒: ${keysPerSecond}\nスコア: ${score}`
         }
         // 「しゅ」とかのローマ字一覧に「し」と「ゅ」のローマ字一覧を全部まとめる
         // 「しゅ」の場合は「し」に3個、「ゅ」に2個、「しゅ」に元々2個候補があるので、
@@ -301,6 +313,7 @@ export class ScenePlay extends Phaser.Scene {
             if (candidates.length > 0) {
                 romanInput += key
                 inputForSentence += key
+                correctCount++
                 console.log(romanInput, candidates, inputForSentence)
                 this.text_roman.text = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.map(d => d.roman[0]).slice(kanaIndex + 1).join('')}`
                 if (romanInput === candidates[0]) {
@@ -317,6 +330,10 @@ export class ScenePlay extends Phaser.Scene {
             }
         }
         this.input.keyboard.on('keydown', (e) => {
+            if (time <= 0) {
+                return
+            }
+            typeCount++
             let d = kanaRomanMap[kanaIndex]
             // 今打ってる文字が最後の文字じゃない場合
             if (kanaIndex < kanaRomanMap.length - 1) {
@@ -341,6 +358,9 @@ export class ScenePlay extends Phaser.Scene {
                             inputForSentence += e.key
                             // 重ねたキーを記録
                             charForT = e.key
+                            // 正しい入力としてカウントする
+                            correctCount++
+                            updateStats()
                             // 「っ」の判定の場合は、一旦処理を止める
                             return
                         }
@@ -365,6 +385,7 @@ export class ScenePlay extends Phaser.Scene {
             }
             const candidates = d.roman.filter(r => r.startsWith(`${romanInput}${e.key}`))
             checkByCandidates(candidates, e.key)
+            updateStats()
         })
         const showRandomSentence = () => {
             sentence = sentences[Math.floor(Math.random() * sentences.length)]
@@ -391,27 +412,35 @@ export class ScenePlay extends Phaser.Scene {
                 .setOrigin(0.5, 1)
                 .setFontSize(32)
                 .setFontFamily('MS UI Gothic')
+            this.text_stats = new CustomText(this, 0, HEIGHT - 180, '')
+                .setFontSize(32)
             this.add.existing(this.text_roman)
             this.add.existing(this.text_display)
+            this.add.existing(this.text_stats)
         }
         const startTimer = () => {
-            let time = 60
             const timer_task = () => {
+                time--
                 if (time <= 0) {
                     this.text_timer.text = `終了`
+                    this.text_display.text = '終了'
+                    this.text_roman.text = 'syuuryou'
+                    this.text_display.color = 0x0000ff
+                    this.text_roman.color = 0x0000ff
                     clearInterval(timer_id)
                     return
                 }
                 this.text_timer.text = `残り${time}秒`
-                time--
+                updateStats()
             }
             timer_task()
             timer_id = setInterval(timer_task, 1000)
         }
         prepareForSmallChars()
+        initTextArea()
         createTimer()
         startTimer()
-        initTextArea()
         showRandomSentence()
+        updateStats()
     }
 }
