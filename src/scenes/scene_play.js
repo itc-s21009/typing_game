@@ -199,6 +199,8 @@ const romans = {
     'ゅ': ['lyu', 'xyu'],
     'ょ': ['lyo', 'xyo'],
     'ゎ': ['lwa', 'xwa'],
+    '、': [','],
+    '。': ['.'],
 }
 
 const easy = [
@@ -217,6 +219,7 @@ const normal = [
     // {display: 'スマッシュ', kana: 'すまっしゅ'},
     // {display: 'やっふー', kana: 'やっふー'},
     {display: 'かっこいい', kana: 'かっこいい'},
+    {display: 'あっ、福山雅治だ！', kana: 'あっ、ふくやままさはるだ'},
     // {display: '東京特許許可局局長', kana: 'とうきょうとっきょきょかきょくきょくちょう'},
     // {display: 'あっつい', kana: 'あっつい'},
     // {display: 'ふぉっふぉっふぉ', kana: 'ふぉっふぉっふぉ'},
@@ -326,8 +329,8 @@ export class ScenePlay extends Phaser.Scene {
                 // 次の文字が「っ」以外の小文字の場合
                 const condY = 'ぁぃぅぇぉゃゅょ'.includes(nextChar.kana)
                 if (condN || condT) {
-                    // 次の文字の最初のローマ字がn以外で、それが打ったキーと一致した場合
-                    if (nextRomanChar !== 'n' && nextChar.roman.filter(r => r.startsWith(e.key)).length > 0) {
+                    // 次の文字の最初のローマ字がnと句読点以外で、それが打ったキーと一致した場合
+                    if (!'n,.'.includes(nextRomanChar) && nextChar.roman.filter(r => r.startsWith(e.key)).length > 0) {
                         kanaIndex++
                         romanInput = ''
                         if (condN) {
