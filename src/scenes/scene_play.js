@@ -211,8 +211,9 @@ const normal = [
     // {display: '名前はまだ無い', kana: 'なまえはまだない'},
     // {display: 'スマッシュ', kana: 'すまっしゅ'},
     {display: 'やっふー', kana: 'やっふー'},
-    {display: 'あっつい', kana: 'あっつい'},
-    {display: 'ふぉっふぉっふぉ', kana: 'ふぉっふぉっふぉ'},
+    {display: 'かっこいい', kana: 'かっこいい'},
+    // {display: 'あっつい', kana: 'あっつい'},
+    // {display: 'ふぉっふぉっふぉ', kana: 'ふぉっふぉっふぉ'},
     // {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
 ]
 const hard = [
@@ -278,7 +279,16 @@ export class ScenePlay extends Phaser.Scene {
         let kanaIndex           // 今打ってる文字の位置
         let romanInput          // 今打ってる文字に対して、どんなキーで正しく打ったか
         let inputForSentence    // 出題中の文章に対して、どんなキーで正しく打ったか
+        let charForT            // 「kko(っこ)」のように重ねて入力する場合、何を重ねたかの記録用（この場合はk）
         const checkByCandidates = (candidates, key) => {
+            // 2文字目以降で、前の文字が「っ」の場合
+            if (kanaIndex > 0 && kanaRomanMap[kanaIndex - 1].kana === 'っ') {
+                // 前回重ねた文字を使った打ち方のみ残す
+                // 「hhu(っふ)」を「f」で重ねた場合、
+                // ['hu', 'fu']から'fu'だけを残す
+                // これをしないと「やっふー」が「yahfu-」とか「yafhu-」で打ててしまった
+                candidates = candidates.filter(c => c.startsWith(charForT))
+            }
             if (candidates.length > 0) {
                 romanInput += key
                 inputForSentence += key
@@ -317,8 +327,11 @@ export class ScenePlay extends Phaser.Scene {
                             // 「ん」の判定の場合は、次の文字の判定をこの先で実行する
                             d = kanaRomanMap[kanaIndex]
                         } else if (condT) {
-                            // 「っ」の判定の場合は、一旦処理を止める
+                            // 正しく打ったキーを記録
                             inputForSentence += e.key
+                            // 重ねたキーを記録
+                            charForT = e.key
+                            // 「っ」の判定の場合は、一旦処理を止める
                             return
                         }
                     }
