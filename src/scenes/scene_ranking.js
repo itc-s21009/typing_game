@@ -9,9 +9,9 @@ export class SceneRanking extends Phaser.Scene {
     create() {
         this.add.existing(new CustomText(this, 10, 10, 'ランキング'))
         this.add.existing(
-            new CustomText(this, WIDTH - 150, HEIGHT - 120, 'Escで\n戻る')
+            new CustomText(this, WIDTH - 90, HEIGHT - 80, 'Escで\n戻る')
                 .setAlign('right')
-                .setFontSize(50)
+                .setFontSize(30)
         )
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
