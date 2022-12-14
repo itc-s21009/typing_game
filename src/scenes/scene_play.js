@@ -315,7 +315,7 @@ export class ScenePlay extends Phaser.Scene {
                 inputForSentence += key
                 correctCount++
                 console.log(romanInput, candidates, inputForSentence)
-                this.text_roman.text = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.map(d => d.roman[0]).slice(kanaIndex + 1).join('')}`
+                this.text_roman.text = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
                 if (romanInput === candidates[0]) {
                     kanaIndex++
                     romanInput = ''
@@ -401,8 +401,7 @@ export class ScenePlay extends Phaser.Scene {
             this.add.existing(this.text_timer)
         }
         const initTextArea = () => {
-            this.add.rectangle(WIDTH / 4, HEIGHT / 2)
-                .setSize(550, HEIGHT / 4)
+            this.add.rectangle(WIDTH / 2, HEIGHT / 2, 600, HEIGHT / 4)
                 .setFillStyle(0x808080)
             this.text_roman = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
                 .setOrigin(0.5, 1)
