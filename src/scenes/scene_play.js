@@ -1,4 +1,4 @@
-import {HEIGHT, SCENE_PLAY, SCENE_TITLE, WIDTH} from "./scene_loader";
+import {HEIGHT, SCENE_LEVEL, SCENE_PLAY, SCENE_RESULT, WIDTH} from "./scene_loader";
 import CustomText from "../custom_text";
 
 const romans = {
@@ -251,7 +251,7 @@ export class ScenePlay extends Phaser.Scene {
         let time = time_start
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
-                this.scene.start(SCENE_TITLE)
+                this.scene.start(SCENE_LEVEL)
                 clearInterval(timer_id)
             }
         })
@@ -263,11 +263,15 @@ export class ScenePlay extends Phaser.Scene {
         }
         let typeCount = 0       // 全入力回数
         let correctCount = 0    // 正しい入力回数
-        const updateStats = () => {
+        const getCalculatedStats = () => {
             const miss = typeCount - correctCount
             const accuracy = Math.round(correctCount / typeCount * 100 * 10) / 10
             const keysPerSecond = Math.round(correctCount / (time_start - time) * 10) / 10
             const score = Math.round(correctCount * keysPerSecond * (accuracy / 100))
+            return {miss: miss, accuracy: accuracy, keysPerSecond: keysPerSecond, score: score}
+        }
+        const updateStats = () => {
+            const {miss, accuracy, keysPerSecond, score} = getCalculatedStats()
             this.text_stats.text = `(後で消す)\nミス数: ${miss}\n正確率: ${accuracy}%\nキー/秒: ${keysPerSecond}\nスコア: ${score}`
         }
         // 「しゅ」とかのローマ字一覧に「し」と「ゅ」のローマ字一覧を全部まとめる
@@ -420,12 +424,14 @@ export class ScenePlay extends Phaser.Scene {
         const startTimer = () => {
             const timer_task = () => {
                 if (time <= 0) {
-                    this.text_timer.text = `終了`
-                    this.text_display.text = '終了'
-                    this.text_roman.text = 'syuuryou'
-                    this.text_display.color = 0x0000ff
-                    this.text_roman.color = 0x0000ff
                     clearInterval(timer_id)
+                    const {miss, accuracy, keysPerSecond, score} = getCalculatedStats()
+                    this.scene.start(SCENE_RESULT, {
+                        score: score,
+                        speed: keysPerSecond,
+                        miss: miss,
+                        accuracy: accuracy
+                    })
                 } else {
                     this.text_timer.text = `残り${time}秒`
                     updateStats()

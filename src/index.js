@@ -7,6 +7,7 @@ const config = {
     width: WIDTH,
     height: HEIGHT,
     scene: [SceneTitle, SceneRanking, ScenePlay, SceneResult, SceneLevel],
-    backgroundColor: '#eee'
+    backgroundColor: '#eee',
+    parent: 'game',
 }
 const game = new Phaser.Game(config)

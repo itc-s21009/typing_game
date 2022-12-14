@@ -1,4 +1,4 @@
-import {HEIGHT, SCENE_RESULT, WIDTH} from "./scene_loader.js";
+import {HEIGHT, SCENE_RESULT, SCENE_TITLE, WIDTH} from "./scene_loader.js";
 import CustomText from "../custom_text.js";
 import CustomButton from "../custom_button";
 
@@ -8,6 +8,11 @@ export class SceneResult extends Phaser.Scene {
     }
 
     create({score, speed, miss, accuracy}) {
+        this.input.keyboard.on('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.scene.start(SCENE_TITLE)
+            }
+        })
         this.add.existing(new CustomText(this, WIDTH / 2, 50, '結果')
             .setAlignCenterHorizontally(true)
             .setFontSize(60))
@@ -17,14 +22,17 @@ export class SceneResult extends Phaser.Scene {
             .setAlign('center')
             .setFontSize(60)
         )
-        this.add.existing(new CustomText(this, WIDTH / 3, 280, `・${speed}`)
-            .setFontSize(60)
+        this.add.existing(new CustomText(this, WIDTH / 3, 280, `・速さ：${speed}キー/秒`)
+            .setAlignCenterHorizontally(true)
+            .setFontSize(50)
         )
-        this.add.existing(new CustomText(this, WIDTH / 3, 330, `・${miss}`)
-            .setFontSize(60)
+        this.add.existing(new CustomText(this, WIDTH / 3, 330, `・ミス：${miss}回`)
+            .setAlignCenterHorizontally(true)
+            .setFontSize(50)
         )
-        this.add.existing(new CustomText(this, WIDTH / 3, 380, `・${accuracy} %`)
-            .setFontSize(60)
+        this.add.existing(new CustomText(this, WIDTH / 3, 380, `・正確率：${accuracy} %`)
+            .setAlignCenterHorizontally(true)
+            .setFontSize(50)
         )
         this.add.existing(
             new CustomText(this, WIDTH - 90, HEIGHT - 80, 'Escで\n戻る')
