@@ -1,4 +1,4 @@
-import {HEIGHT, SCENE_RESULT, WIDTH} from "./scene_loader.js";
+import {HEIGHT, SCENE_RESULT, SCENE_TITLE, WIDTH} from "./scene_loader.js";
 import CustomText from "../custom_text.js";
 import CustomButton from "../custom_button";
 
@@ -8,6 +8,11 @@ export class SceneResult extends Phaser.Scene {
     }
 
     create({score, speed, miss, accuracy}) {
+        this.input.keyboard.on('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.scene.start(SCENE_TITLE)
+            }
+        })
         this.add.existing(new CustomText(this, WIDTH / 2, 50, '結果')
             .setAlignCenterHorizontally(true)
             .setFontSize(60))

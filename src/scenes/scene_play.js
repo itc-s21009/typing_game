@@ -1,4 +1,4 @@
-import {HEIGHT, SCENE_PLAY, SCENE_RESULT, SCENE_TITLE, WIDTH} from "./scene_loader";
+import {HEIGHT, SCENE_LEVEL, SCENE_PLAY, SCENE_RESULT, WIDTH} from "./scene_loader";
 import CustomText from "../custom_text";
 
 const romans = {
@@ -251,7 +251,7 @@ export class ScenePlay extends Phaser.Scene {
         let time = time_start
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
-                this.scene.start(SCENE_TITLE)
+                this.scene.start(SCENE_LEVEL)
                 clearInterval(timer_id)
             }
         })
