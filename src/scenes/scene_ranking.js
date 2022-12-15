@@ -54,7 +54,6 @@ export class SceneRanking extends Phaser.Scene {
                 this.text_ranking.destroy()
             })
             .catch((e) => {
-                console.log(e)
                 this.text_ranking.text = `ランキングを取得できませんでした`
             })
     }
