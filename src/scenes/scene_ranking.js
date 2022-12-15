@@ -13,7 +13,8 @@ export class SceneRanking extends Phaser.Scene {
     }
 
     create() {
-        this.add.existing(new CustomText(this, 10, 10, 'ランキング'))
+        this.add.existing(new CustomText(this, 10, 10, 'ランキング')
+            .setFontSize(70))
         this.add.existing(
             new CustomText(this, WIDTH - 90, HEIGHT - 80, 'Escで\n戻る')
                 .setAlign('right')
@@ -21,15 +22,15 @@ export class SceneRanking extends Phaser.Scene {
         )
         this.add.existing(this.text_ranking = new CustomText(this, 10, 100, 'データ読み込み中')
             .setFontSize(25)
-            .setFontFamily('Courier New'))
-        this.add.existing(this.table_ranking = new CustomTable(this, 10, 100, WIDTH - 100, HEIGHT))
+        )
+        this.add.existing(this.table_ranking = new CustomTable(this, 30, 100, WIDTH, HEIGHT, null, 18))
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.scene.start(SCENE_TITLE)
             }
         })
         const toDate = (date) => ({
-            year: date.getFullYear(),
+            year: date.getFullYear() - 2000,
             month: date.getMonth() + 1,
             day: date.getDate(),
             hour: date.getHours(),
@@ -41,19 +42,20 @@ export class SceneRanking extends Phaser.Scene {
         axios.get(`${API_URL}/api/ranking`)
             .then(res => res.data)
             .then(data => {
-                this.text_ranking.destroy()
                 const tableData = [
-                    ['スコア', 'プレイヤー名', '速度', 'ミス数', '正確率', '更新日時'],
-                    ...data.map(d => {
+                    ['', 'スコア', 'プレイヤー名', '速度', 'ミス数', '正確率', '更新日時'],
+                    ...data.map((d, i) => {
                         const {year, month, day, hour, minute} = toDate(new Date(d['updated_at']))
                         const dateStr = `${year}/${p2(month)}/${p2(day)} ${p2(hour)}:${p2(minute)}`
-                        return [`${d['score']}点`, `${d['name']}`, `${d['kps']}キー/秒`, `${d['miss']}回`, `${d['accuracy']}%`, `${dateStr}`]
+                        return [`${i+1}位`, `${d['score']}点`, `${d['name']}`, `${d['kps']}キー/秒`, `${d['miss']}回`, `${d['accuracy']}%`, `${dateStr}`]
                     })
                 ]
                 this.table_ranking.setTableData(tableData)
+                this.text_ranking.destroy()
             })
             .catch((e) => {
-                this.text_ranking.text = `ランキングを取得できませんでした\n${Object.keys(e).map(k => e[k]).join('\n')}`
+                console.log(e)
+                this.text_ranking.text = `ランキングを取得できませんでした`
             })
     }
 }
