@@ -1,5 +1,7 @@
 import {HEIGHT, SCENE_RANKING, SCENE_TITLE, WIDTH} from "./scene_loader.js";
 import CustomText from "../custom_text";
+import axios from "axios";
+import {API_URL} from "../index";
 
 export class SceneRanking extends Phaser.Scene {
     text_ranking
@@ -30,14 +32,17 @@ export class SceneRanking extends Phaser.Scene {
             minute: date.getMinutes(),
             second: date.getSeconds()
         })
-        fetch('http://localhost:3000/api/ranking')
-            .then(res => res.json())
+        axios.get(`${API_URL}/api/ranking`)
+            .then(res => res.data)
             .then(data => {
                 this.text_ranking.text = data.map(d => {
                     const {year, month, day, hour, minute, second} = toDate(new Date(d['updated_at']))
                     const dateStr = `${year}年${month}月${day}日${hour}:${minute}:${second}`
-                    return `${d['name']}\t${d['score']}\t${dateStr}`
+                    return `${d['score']}点 ${d['name']} ${d['kps']}キー/秒 ${d['miss']}ミス ${d['accuracy']}% ${dateStr}`
                 }).join('\n')
+            })
+            .catch((e) => {
+                this.text_ranking.text = `ランキングを取得できませんでした\n${Object.keys(e).map(k => e[k]).join('\n')}`
             })
     }
 }

@@ -1,6 +1,8 @@
 import {HEIGHT, SCENE_RESULT, SCENE_TITLE, WIDTH} from "./scene_loader.js";
 import CustomText from "../custom_text.js";
 import CustomButton from "../custom_button";
+import axios from "axios";
+import {API_URL} from "../index";
 
 export class SceneResult extends Phaser.Scene {
     constructor() {
@@ -40,29 +42,36 @@ export class SceneResult extends Phaser.Scene {
                 .setFontSize(30)
         )
         const click = () => {
-            this.add.rectangle(400, 250, 550, 500)
+            const bg = this.add.rectangle(400, 250, 550, 500)
                 .setFillStyle(0xffffff)
-
-            this.add.existing(
+            const contents = [
                 new CustomText(this, WIDTH / 2, 10, 'ランキングに名前を登録します。')
                     .setAlignCenterHorizontally(true)
-                    .setFontSize(30)
-            )
-            this.add.existing(
-                new CustomText(this, WIDTH / 4, HEIGHT / 3, '名前入力')
-                    .setAlignCenterHorizontally(true)
-                    .setFontSize(30)
-            )
-            this.add.existing(
-                new CustomButton(this, WIDTH / 8 * 3, HEIGHT - 50, 180, 50, '登録', () => {
-
-                } )
-            )
-            this.add.existing(
+                    .setFontSize(30),
+                new CustomButton(this, WIDTH / 8 * 3, HEIGHT - 50, 180, 50, '名前入力', () => {
+                    let name
+                    while ((name = window.prompt('名前を入力してください')).length <= 0) ;
+                    axios.post(`${API_URL}/api/records/register`, {
+                        name: name,
+                        kps: speed,
+                        miss: miss,
+                        accuracy: accuracy,
+                        score: score,
+                    }, {
+                        withCredentials: true
+                    }).then(r => {
+                        if (r.status === 200) {
+                            window.alert('スコアを登録しました')
+                            contents.forEach(c => c.destroy())
+                        }
+                    })
+                }),
                 new CustomButton(this, WIDTH / 8 * 5, HEIGHT - 50, 180, 50, 'キャンセル', () => {
-
-                } )
-            )
+                    contents.forEach(c => c.destroy())
+                })
+            ]
+            contents.push(bg)
+            contents.forEach(c => this.add.existing(c))
         }
         const register = new CustomButton(this, WIDTH - 50, HEIGHT - 110, 80, 50, '登録', click)
         this.add.existing(register)
