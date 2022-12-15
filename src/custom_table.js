@@ -1,14 +1,18 @@
 export default class CustomTable extends Phaser.GameObjects.Container {
     texts
+    lines
     fontFamily
     fontSize
     tableData
 
-    constructor(scene, x, y, W, H, data) {
+    constructor(scene, x, y, W, H, data = [], fontSize = 20, fontFamily = 'Arial') {
         super(scene, x, y)
         this.setSize(W, H)
-        this.fontFamily = 'Arial'
-        this.fontSize = 20
+        this.fontFamily = fontFamily
+        this.fontSize = fontSize
+        this.texts = []
+        this.lines = []
+        this.tableData = []
         if (data) {
             this.tableData = data
             this.updateTable()
@@ -17,13 +21,11 @@ export default class CustomTable extends Phaser.GameObjects.Container {
 
     setFontSize = (size) => {
         this.fontSize = size
-        this.texts.forEach(t => t.setFontSize(size))
         this.updateTable()
     }
 
     setFontFamily = (font) => {
         this.fontSize = font
-        this.texts.forEach(t => t.setFontFamily(font))
         this.updateTable()
     }
 
@@ -34,6 +36,11 @@ export default class CustomTable extends Phaser.GameObjects.Container {
     }
 
     updateTable = () => {
+        this.texts.forEach(line => line.forEach(t => t.destroy()))
+        this.texts = []
+        this.lines.forEach(t => t.destroy())
+        this.lines = []
+        if (this.tableData.length <= 0) return
         const ctx = document.createElement('canvas').getContext('2d')
         ctx.font = `${this.fontSize}px ${this.fontFamily}`
         // 縦の列ごとの最大横幅
@@ -44,19 +51,20 @@ export default class CustomTable extends Phaser.GameObjects.Container {
         const lineStartX = this.x - spaceWidth / 2
         const lineEndX = maxWidths.reduce((a, b) => a + b) + spaceWidth * this.tableData[0].length
         this.texts = this.tableData.map((line, y) => {
+            const addLine = (x, y, x1, y1, x2, y2, strokeColor) => this.lines.push(this.scene.add.line(x, y, x1, y1, x2, y2, strokeColor).setOrigin(0))
             let offsetX = 0
             const textY = this.y + y * (this.fontSize + 10)
             if (y <= 1)  // 上から２本まで横の線を引く
-                this.scene.add.line(lineStartX, textY - this.fontSize / 4, 0, 0, lineEndX, 0, 0).setOrigin(0)
+                addLine(lineStartX, textY - this.fontSize / 4, 0, 0, lineEndX, 0, 0)
             if (y === this.tableData.length - 1) // 一番下の線
-                this.scene.add.line(lineStartX, textY + (this.fontSize + 10) - this.fontSize / 4, 0, 0, lineEndX, 0, 0).setOrigin(0)
-            line.map((d, x) => {
+                addLine(lineStartX, textY + (this.fontSize + 10) - this.fontSize / 4, 0, 0, lineEndX, 0, 0)
+            return line.map((d, x) => {
                 const textX = this.x + offsetX
                 offsetX += maxWidths[x] + spaceWidth
                 // 一番左端と、縦の線
-                this.scene.add.line(textX - spaceWidth / 2, textY - 5, 0, 0, 0, this.fontSize * 1.6, 0).setOrigin(0)
+                addLine(textX - spaceWidth / 2, textY - 5, 0, 0, 0, this.fontSize * 1.6, 0)
                 if (x === line.length - 1) {// 一番右端の線
-                    this.scene.add.line(this.x + offsetX - spaceWidth / 2, textY - 5, 0, 0, 0, this.fontSize * 1.6, 0).setOrigin(0)
+                    addLine(this.x + offsetX - spaceWidth / 2, textY - 5, 0, 0, 0, this.fontSize * 1.6, 0)
                 }
                 return this.scene.add.text(textX + (y === 0 ? maxWidths[x] / 2 : 0), textY, d)
                     .setColor('black')
