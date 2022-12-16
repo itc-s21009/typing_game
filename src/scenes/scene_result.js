@@ -64,6 +64,8 @@ export class SceneResult extends Phaser.Scene {
                             window.alert('スコアを登録しました')
                             contents.forEach(c => c.destroy())
                         }
+                    }).catch(() => {
+                        window.alert('エラーが発生したため、スコアを登録できませんでした')
                     })
                 }),
                 new CustomButton(this, WIDTH / 8 * 5, HEIGHT - 50, 180, 50, 'キャンセル', () => {
