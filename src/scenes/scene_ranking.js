@@ -66,7 +66,7 @@ export class SceneRanking extends Phaser.Scene {
                     .setAlignCenterHorizontally(true))
             })
             .catch((e) => {
-                this.text_ranking.text = `ランキングを取得できませんでした`
+                this.text_loading.text = `ランキングを取得できませんでした`
             })
     }
 }
