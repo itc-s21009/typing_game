@@ -205,12 +205,6 @@ const romans = {
     '。': ['.'],
 }
 
-export const DIFFICULTY = Object.freeze({
-    EASY: 0,
-    NORMAL: 1,
-    HARD: 2
-})
-
 export class ScenePlay extends Phaser.Scene {
     text_loading
     text_timer
@@ -233,7 +227,7 @@ export class ScenePlay extends Phaser.Scene {
             .setCentered(true)
             .setAlign('center')
         this.add.existing(this.text_loading)
-        axios.get(`${API_URL}/api/sentences?min=20`)
+        axios.get(`${API_URL}/api/sentences?min=${difficulty.min}&max=${difficulty.max}`)
             .then(r => r.data)
             .then(sentences => {
                 this.text_loading.destroy()
@@ -282,6 +276,7 @@ export class ScenePlay extends Phaser.Scene {
             romans[str].push(...condidatesToAdd)
         })
         const kanaToRoman = (kana) => kana.split('').map(k => romans[k][0]).join('')
+        let qSentences = []     // 出題する文章のキュー
         let sentence            // 出題中の文章
         // 出題中の文章の、かなとローマ字の連想配列のリスト
         // [
@@ -381,7 +376,13 @@ export class ScenePlay extends Phaser.Scene {
             updateStats()
         })
         const showRandomSentence = () => {
-            sentence = sentences[Math.floor(Math.random() * sentences.length)]
+            // キューが空になったら、新しくランダムな順番で補充する
+            // これで同じ文章を２連続で打ったり、すぐ同じ文章が出るということがほとんどなくなる
+            if (qSentences.length === 0) {
+                const sentencesCopy = [...sentences]
+                qSentences = [...Array(sentencesCopy.length)].map(() => sentencesCopy.splice(Math.floor(Math.random() * sentencesCopy.length), 1)[0])
+            }
+            sentence = qSentences.pop()
             kanaRomanMap = sentence['kana'].split('').map(k => ({kana: k, roman: romans[k]}))
             kanaIndex = 0
             romanInput = ''

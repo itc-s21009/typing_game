@@ -1,7 +1,12 @@
 import CustomButton from "../custom_button.js";
-import {SCENE_PLAY, WIDTH, SCENE_LEVEL, SCENE_TITLE} from "./scene_loader.js";
+import {SCENE_LEVEL, SCENE_PLAY, SCENE_TITLE, WIDTH} from "./scene_loader.js";
 import CustomText from "../custom_text.js";
-import {DIFFICULTY} from "./scene_play.js";
+
+export const DIFFICULTY = Object.freeze({
+    EASY: {min: 1, max: 7},
+    NORMAL: {min: 8, max: 14},
+    HARD: {min: 15, max: 64}
+})
 
 export class SceneLevel extends Phaser.Scene {
     isCtrlDown = false
