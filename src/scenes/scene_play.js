@@ -395,15 +395,15 @@ export class ScenePlay extends Phaser.Scene {
             this.add.existing(this.text_timer)
         }
         const initTextArea = () => {
-            this.add.rectangle(WIDTH / 2, HEIGHT / 2, 600, HEIGHT / 4)
+            this.add.rectangle(WIDTH / 2, HEIGHT / 2, 750, HEIGHT / 4)
                 .setFillStyle(0x808080)
             this.text_roman = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
                 .setOrigin(0.5, 1)
-                .setFontSize(32)
+                .setFontSize(28)
                 .setFontFamily('MS UI Gothic')
             this.text_display = new CustomText(this, WIDTH / 2, HEIGHT / 2, '')
                 .setOrigin(0.5, 1)
-                .setFontSize(32)
+                .setFontSize(28)
                 .setFontFamily('MS UI Gothic')
             this.text_stats = new CustomText(this, 0, HEIGHT - 180, '')
                 .setFontSize(32)
