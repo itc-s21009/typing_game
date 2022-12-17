@@ -1,7 +1,7 @@
 import {SceneTitle, SceneRanking, WIDTH, HEIGHT, ScenePlay} from "./scenes/scene_loader.js";
 import {SceneResult} from "./scenes/scene_result";
 import {SceneLevel} from "./scenes/scene_level";
-export const API_URL = `http://${location.hostname}:3000`
+export const API_URL = `http://${location.host}`
 
 const config = {
     type: Phaser.AUTO,
