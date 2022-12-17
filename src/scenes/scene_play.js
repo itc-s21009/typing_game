@@ -1,5 +1,7 @@
 import {HEIGHT, SCENE_LEVEL, SCENE_PLAY, SCENE_RESULT, WIDTH} from "./scene_loader";
 import CustomText from "../custom_text";
+import {API_URL} from "../index";
+import axios from "axios";
 
 const romans = {
     'あ': ['a'],
@@ -203,32 +205,6 @@ const romans = {
     '。': ['.'],
 }
 
-const easy = [
-    {display: 'イージー', kana: 'いーじー'}
-]
-const normal = [
-    {display: '吾輩は猫である', kana: 'わがはいはねこである'},
-    {display: 'お寿司が食べたい', kana: 'おすしがたべたい'},
-    {display: 'タイピングゲーム', kana: 'たいぴんぐげーむ'},
-    {display: '朱色', kana: 'しゅいろ'},
-    {display: '橋本環奈', kana: 'はしもとかんな'},
-    {display: 'ピッタンコ', kana: 'ぴったんこ'},
-    {display: 'あっいっう', kana: 'あっいっう'},
-    {display: '星のカービィ', kana: 'ほしのかーびぃ'},
-    {display: '名前はまだ無い', kana: 'なまえはまだない'},
-    {display: 'スマッシュ', kana: 'すまっしゅ'},
-    {display: 'やっふー', kana: 'やっふー'},
-    {display: 'かっこいい', kana: 'かっこいい'},
-    {display: 'あっ、福山雅治だ！', kana: 'あっ、ふくやままさはるだ'},
-    {display: '東京特許許可局局長', kana: 'とうきょうとっきょきょかきょくきょくちょう'},
-    {display: 'あっつい', kana: 'あっつい'},
-    {display: 'ふぉっふぉっふぉ', kana: 'ふぉっふぉっふぉ'},
-    {display: 'プログラミング', kana: 'ぷろぐらみんぐ'},
-]
-const hard = [
-    {display: 'ハード', kana: 'はーど'}
-]
-const SENTENCES = [easy, normal, hard]
 export const DIFFICULTY = Object.freeze({
     EASY: 0,
     NORMAL: 1,
@@ -236,6 +212,7 @@ export const DIFFICULTY = Object.freeze({
 })
 
 export class ScenePlay extends Phaser.Scene {
+    text_loading
     text_timer
     text_display
     text_roman
@@ -245,9 +222,28 @@ export class ScenePlay extends Phaser.Scene {
         super({key: SCENE_PLAY});
     }
 
-    create({difficulty}) {
+    create({difficulty, debug}) {
+        if (difficulty === undefined) {
+            this.add.existing(new CustomText(this, WIDTH / 2, HEIGHT / 2, 'エラー\ndifficultyがないです')
+                .setCentered(true)
+                .setAlign('center'))
+            return
+        }
+        this.text_loading = new CustomText(this, WIDTH / 2, HEIGHT / 2, '読み込み中...')
+            .setCentered(true)
+            .setAlign('center')
+        this.add.existing(this.text_loading)
+        axios.get(`${API_URL}/api/sentences?min=20`)
+            .then(r => r.data)
+            .then(sentences => {
+                this.text_loading.destroy()
+                this.drawScreen(sentences, debug)
+            })
+            .catch((e) => this.text_loading.text = "エラー\nお題の文章を読み込めませんでした\n" + e)
+    }
+    drawScreen(sentences, debug) {
         let timer_id
-        const time_start = 60
+        const time_start = debug ? 5 : 60
         let time = time_start
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -255,12 +251,6 @@ export class ScenePlay extends Phaser.Scene {
                 clearInterval(timer_id)
             }
         })
-        if (difficulty === undefined) {
-            this.add.existing(new CustomText(this, WIDTH / 2, HEIGHT / 2, 'エラー\ndifficultyがないです')
-                .setCentered(true)
-                .setAlign('center'))
-            return
-        }
         let typeCount = 0       // 全入力回数
         let correctCount = 0    // 正しい入力回数
         const getCalculatedStats = () => {
@@ -292,7 +282,6 @@ export class ScenePlay extends Phaser.Scene {
             romans[str].push(...condidatesToAdd)
         })
         const kanaToRoman = (kana) => kana.split('').map(k => romans[k][0]).join('')
-        const sentences = SENTENCES[difficulty]
         let sentence            // 出題中の文章
         // 出題中の文章の、かなとローマ字の連想配列のリスト
         // [
@@ -393,12 +382,12 @@ export class ScenePlay extends Phaser.Scene {
         })
         const showRandomSentence = () => {
             sentence = sentences[Math.floor(Math.random() * sentences.length)]
-            kanaRomanMap = sentence.kana.split('').map(k => ({kana: k, roman: romans[k]}))
+            kanaRomanMap = sentence['kana'].split('').map(k => ({kana: k, roman: romans[k]}))
             kanaIndex = 0
             romanInput = ''
             inputForSentence = ''
-            this.text_roman.text = kanaToRoman(sentence.kana)
-            this.text_display.text = sentence.display
+            this.text_roman.text = kanaToRoman(sentence['kana'])
+            this.text_display.text = sentence['sentence']
         }
         const createTimer = () => {
             this.text_timer = new CustomText(this, 0, 0, '')
