@@ -32,12 +32,21 @@ export class SceneLevel extends Phaser.Scene {
         this.add.existing(new CustomButton(this, WIDTH / 5, 300, 200, 200, 'Easy', () => {
             this.start(SCENE_PLAY, DIFFICULTY.EASY)
         }))
+        this.add.existing(new CustomText(this, WIDTH / 5, 400, `${DIFFICULTY.EASY.max}文字以下`)
+            .setFontSize(40)
+            .setAlignCenterHorizontally(true))
         this.add.existing(new CustomButton(this, WIDTH / 2, 300, 200, 200, 'Normal', () => {
             this.start(SCENE_PLAY, DIFFICULTY.NORMAL)
         }))
+        this.add.existing(new CustomText(this, WIDTH / 2, 400, `${DIFFICULTY.NORMAL.min}〜${DIFFICULTY.NORMAL.max}文字`)
+            .setFontSize(40)
+            .setAlignCenterHorizontally(true))
         this.add.existing(new CustomButton(this, WIDTH / 5 * 4, 300, 200, 200, 'Hard', () => {
             this.start(SCENE_PLAY, DIFFICULTY.HARD)
         }))
+        this.add.existing(new CustomText(this, WIDTH / 5 * 4, 400, `${DIFFICULTY.HARD.min}文字以上`)
+            .setFontSize(40)
+            .setAlignCenterHorizontally(true))
     }
 
     start(key, difficulty) {
