@@ -320,13 +320,13 @@ export class ScenePlay extends Phaser.Scene {
                 romanInput += key
                 inputForSentence += key
                 correctCount++
-                console.log(romanInput, candidates, inputForSentence)
+                debug.log(romanInput, candidates, inputForSentence)
                 this.text_roman.text = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
                 if (romanInput === candidates[0]) {
                     kanaIndex++
                     romanInput = ''
                     charForT = ''
-                    console.log(`  completed: ${candidates[0]}`)
+                    debug(`  completed: ${candidates[0]}`)
                 }
                 if (kanaIndex === kanaRomanMap.length) {
                     kanaIndex = 0
