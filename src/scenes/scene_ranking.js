@@ -1,7 +1,7 @@
 import {HEIGHT, SCENE_RANKING, SCENE_TITLE, WIDTH} from "./scene_loader.js";
 import CustomText from "../custom_text";
 import axios from "axios";
-import {API_URL} from "../index";
+import {API_URL, debug} from "../index";
 import CustomTable from "../custom_table";
 import CustomButton from "../custom_button";
 
@@ -44,7 +44,7 @@ export class SceneRanking extends Phaser.Scene {
         const reqMe = axios.get(`${API_URL}/api/records/me`, {withCredentials: true})
         axios.all([reqRanking, reqMe])
             .then(([r1, r2]) => {
-                console.log(r1, r2)
+                debug(r1, r2)
                 return [r1.data, r2.data[0]]
             })
             .then(([ranking, me]) => {

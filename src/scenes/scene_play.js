@@ -231,11 +231,29 @@ export class ScenePlay extends Phaser.Scene {
             .then(r => r.data)
             .then(sentences => {
                 this.text_loading.destroy()
-                this.drawScreen(sentences, debug)
+                this.startCountdown(() => this.startGame(sentences, debug))
             })
-            .catch((e) => this.text_loading.text = "エラー\nお題の文章を読み込めませんでした\n" + e)
+            .catch((e) => this.text_loading.text = "エラー\nお題の文章を\n読み込めませんでした\n" + e)
     }
-    drawScreen(sentences, debug) {
+    startCountdown(callback) {
+        let timer_id
+        let time = 3
+        const countdown_text = new CustomText(this, WIDTH / 2, HEIGHT / 2, '')
+            .setCentered(true)
+        this.add.existing(countdown_text)
+        const timer_task = () => {
+            if (time <= 0) {
+                countdown_text.destroy()
+                clearInterval(timer_id)
+                callback()
+                return
+            }
+            countdown_text.setText(`${time}...`)
+            time--
+        }
+        timer_id = setInterval(timer_task, 1000)
+    }
+    startGame(sentences, debug) {
         let timer_id
         const time_start = debug ? 5 : 60
         let time = time_start
@@ -302,13 +320,13 @@ export class ScenePlay extends Phaser.Scene {
                 romanInput += key
                 inputForSentence += key
                 correctCount++
-                console.log(romanInput, candidates, inputForSentence)
+                debug.log(romanInput, candidates, inputForSentence)
                 this.text_roman.text = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
                 if (romanInput === candidates[0]) {
                     kanaIndex++
                     romanInput = ''
                     charForT = ''
-                    console.log(`  completed: ${candidates[0]}`)
+                    debug(`  completed: ${candidates[0]}`)
                 }
                 if (kanaIndex === kanaRomanMap.length) {
                     kanaIndex = 0
