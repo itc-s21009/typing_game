@@ -37,9 +37,9 @@ export class SceneResult extends Phaser.Scene {
             .setFontSize(50)
         )
         this.add.existing(
-            new CustomText(this, WIDTH - 90, HEIGHT - 80, 'Escで\n戻る')
-                .setAlign('right')
-                .setFontSize(30)
+            new CustomButton(this, WIDTH - 50, HEIGHT - 50, 80, 50, '戻る', () => {
+                this.scene.start(SCENE_TITLE)
+            })
         )
         const click = () => {
             const bg = this.add.rectangle(400, 250, 550, 500)
