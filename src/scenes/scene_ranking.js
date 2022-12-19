@@ -3,6 +3,7 @@ import CustomText from "../custom_text";
 import axios from "axios";
 import {API_URL, debug} from "../index";
 import CustomTable from "../custom_table";
+import CustomButton from "../custom_button";
 
 export class SceneRanking extends Phaser.Scene {
     text_loading
@@ -16,9 +17,9 @@ export class SceneRanking extends Phaser.Scene {
         this.add.existing(new CustomText(this, 10, 10, 'ランキング')
             .setFontSize(70))
         this.add.existing(
-            new CustomText(this, WIDTH - 90, HEIGHT - 80, 'Escで\n戻る')
-                .setAlign('right')
-                .setFontSize(30)
+            new CustomButton(this, WIDTH - 50, HEIGHT - 50, 80, 50, '戻る', () => {
+                this.scene.start(SCENE_TITLE)
+            })
         )
         this.add.existing(this.text_loading = new CustomText(this, 10, 100, 'データ読み込み中')
             .setFontSize(25)
