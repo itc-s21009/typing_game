@@ -1,0 +1,13 @@
+extends layout
+block content
+  .container.d-flex.align-items-start
+    .row.col-2
+      p
+        a(href='./ranking') ランキングページ
+      p
+        a(href='./sentences') 文章一覧ページ
+    .row.col-10
+      #game.text-center
+block header
+  script(src='//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js')
+  script(src='./js/game.js')
