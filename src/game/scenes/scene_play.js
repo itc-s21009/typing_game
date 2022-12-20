@@ -1,6 +1,6 @@
 import {HEIGHT, SCENE_LEVEL, SCENE_PLAY, SCENE_RESULT, WIDTH} from "./scene_loader";
 import CustomText from "../components/custom_text";
-import {API_URL} from "../../index";
+import {API_URL} from "../../game";
 import axios from "axios";
 
 const romans = {

@@ -2,7 +2,7 @@ import {HEIGHT, SCENE_RESULT, SCENE_TITLE, WIDTH} from "./scene_loader.js";
 import CustomText from "../components/custom_text.js";
 import CustomButton from "../components/custom_button";
 import axios from "axios";
-import {API_URL} from "../../index";
+import {API_URL} from "../../game";
 
 export class SceneResult extends Phaser.Scene {
     constructor() {
