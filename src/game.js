@@ -1,6 +1,6 @@
-import {SceneTitle, SceneRanking, WIDTH, HEIGHT, ScenePlay} from "./scenes/scene_loader.js";
-import {SceneResult} from "./scenes/scene_result";
-import {SceneLevel} from "./scenes/scene_level";
+import {SceneTitle, SceneRanking, WIDTH, HEIGHT, ScenePlay} from "./game/scenes/scene_loader.js";
+import {SceneResult} from "./game/scenes/scene_result";
+import {SceneLevel} from "./game/scenes/scene_level";
 export const API_URL = process.env.NODE_ENV === 'development' ? `http://localhost:3000` : `.`
 export const debug = log => process.env.NODE_ENV === 'development' ? console.log(log) : {}
 

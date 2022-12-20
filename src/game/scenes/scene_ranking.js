@@ -1,9 +1,9 @@
 import {HEIGHT, SCENE_RANKING, SCENE_TITLE, WIDTH} from "./scene_loader.js";
-import CustomText from "../custom_text";
+import CustomText from "../components/custom_text";
 import axios from "axios";
-import {API_URL, debug} from "../index";
-import CustomTable from "../custom_table";
-import CustomButton from "../custom_button";
+import {API_URL, debug} from "../../game";
+import CustomTable from "../components/custom_table";
+import CustomButton from "../components/custom_button";
 
 export class SceneRanking extends Phaser.Scene {
     text_loading

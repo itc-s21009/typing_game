@@ -1,6 +1,6 @@
 import {HEIGHT, SCENE_LEVEL, SCENE_PLAY, SCENE_RESULT, WIDTH} from "./scene_loader";
-import CustomText from "../custom_text";
-import {API_URL} from "../index";
+import CustomText from "../components/custom_text";
+import {API_URL} from "../../game";
 import axios from "axios";
 
 const romans = {
@@ -233,7 +233,7 @@ export class ScenePlay extends Phaser.Scene {
                 this.text_loading.destroy()
                 this.startCountdown(() => this.startGame(sentences, debug))
             })
-            .catch((e) => this.text_loading.text = "エラー\nお題の文章を\n読み込めませんでした\n" + e)
+            .catch((e) => this.text_loading.text = "エラー\nお題の文章を\n読み込めませんでした")
     }
     startCountdown(callback) {
         let timer_id
