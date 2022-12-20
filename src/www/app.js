@@ -1,7 +1,6 @@
 const express = require('express')
 const path = require('path');
 const http = require('http')
-const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const axios = require("axios");
@@ -16,10 +15,6 @@ const setupExpress = () => {
     const app = express()
     app.set('views', path.join(__dirname, 'views'))
     app.set('view engine', 'pug')
-
-    app.use(cors({
-        credentials: true
-    }))
 
     app.use(cookieParser())
     app.use(express.static(path.join(__dirname, '..', '..', 'public')));
