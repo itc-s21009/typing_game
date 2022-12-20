@@ -1,6 +1,6 @@
-import CustomButton from "../custom_button.js";
+import CustomButton from "../components/custom_button.js";
 import {SCENE_LEVEL, SCENE_PLAY, SCENE_TITLE, WIDTH} from "./scene_loader.js";
-import CustomText from "../custom_text.js";
+import CustomText from "../components/custom_text.js";
 
 export const DIFFICULTY = Object.freeze({
     EASY: {min: 1, max: 7},
