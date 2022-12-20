@@ -37,20 +37,32 @@ export class SceneResult extends Phaser.Scene {
             .setFontSize(50)
         )
         this.add.existing(
-            new CustomText(this, WIDTH - 90, HEIGHT - 80, 'Escで\n戻る')
-                .setAlign('right')
-                .setFontSize(30)
+            new CustomButton(this, WIDTH - 50, HEIGHT - 50, 80, 50, '戻る', () => {
+                this.scene.start(SCENE_TITLE)
+            })
         )
         const click = () => {
-            const bg = this.add.rectangle(400, 250, 550, 500)
+            const bg = this.add.rectangle(400, 250, 550, 450)
                 .setFillStyle(0xffffff)
+            let name = ''
+            let text_name
             const contents = [
-                new CustomText(this, WIDTH / 2, 10, 'ランキングに名前を登録します。')
+                new CustomText(this, WIDTH / 2, 40, 'ランキングに名前を登録します。')
                     .setAlignCenterHorizontally(true)
                     .setFontSize(30),
-                new CustomButton(this, WIDTH / 8 * 3, HEIGHT - 50, 180, 50, '名前入力', () => {
-                    let name
+                new CustomButton(this, WIDTH / 2, HEIGHT / 2 + 50, 180, 50, '名前入力', () => {
+
                     while ((name = window.prompt('名前を入力してください')).length <= 0) ;
+                    text_name.text = name
+
+                }),
+                text_name = new CustomText(this, WIDTH / 2, HEIGHT / 2 - 35, '')
+                    .setAlignCenterHorizontally(true)
+                    .setFontSize(30),
+                new CustomButton(this, WIDTH / 8 * 5, HEIGHT - 65, 180, 50, 'キャンセル', () => {
+                    contents.forEach(c => c.destroy())
+                }),
+                new CustomButton(this, WIDTH / 8 * 3, HEIGHT - 65, 180, 50, '登録', () => {
                     axios.post(`${API_URL}/api/records/register`, {
                         name: name,
                         kps: speed,
@@ -60,6 +72,10 @@ export class SceneResult extends Phaser.Scene {
                     }, {
                         withCredentials: true
                     }).then(r => {
+                        if (name.length <= 0) {
+                            window.alert('名前を入力してください。')
+                            return
+                        }
                         if (r.status === 200) {
                             window.alert('スコアを登録しました')
                             contents.forEach(c => c.destroy())
@@ -68,9 +84,8 @@ export class SceneResult extends Phaser.Scene {
                         window.alert('エラーが発生したため、スコアを登録できませんでした')
                     })
                 }),
-                new CustomButton(this, WIDTH / 8 * 5, HEIGHT - 50, 180, 50, 'キャンセル', () => {
-                    contents.forEach(c => c.destroy())
-                })
+                this.add.rectangle(WIDTH / 2, HEIGHT / 2 - 20, 490, 50)
+                    .setFillStyle(0xeeeeee)
             ]
             contents.push(bg)
             contents.forEach(c => this.add.existing(c))
