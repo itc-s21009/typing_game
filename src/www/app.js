@@ -1,9 +1,10 @@
 const express = require('express')
-const path = require('path');
+const path = require('path')
+const config = require('config')
 const http = require('http')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-const axios = require("axios");
+const axios = require("axios")
 
 const setupExpress = () => {
     const render = (res, pug) => d => {
@@ -26,7 +27,7 @@ const setupExpress = () => {
 
     const router = express.Router()
     console.log(process.env.NODE_ENV)
-    const api = axios.create({baseURL: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '.'}/api`})
+    const api = axios.create({baseURL: `${config.get("api-host")}/api`})
     router.get('/', (req, res) => res.render('index'))
     router.get('/ranking', (req, res) => {
         api.get(`/ranking`)
