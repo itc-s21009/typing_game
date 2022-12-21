@@ -77,6 +77,10 @@ const setupExpress = () => {
 
     app.use('/', router)
 
+    app.use((req, res) => {
+        res.render('error', {error: 'No Page.'})
+    })
+
     const server = http.createServer(app)
     const port = process.env.PORT || 8080
     server.listen(port)
