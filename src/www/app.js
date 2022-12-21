@@ -4,7 +4,7 @@ const config = require('config')
 const http = require('http')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-const axios = require("axios")
+const axios = require("axios").create({baseURL: `${config.get("api-host")}/api`})
 
 const setupExpress = () => {
     const render = (res, pug) => d => {
@@ -12,6 +12,14 @@ const setupExpress = () => {
         data.error
             ? res.render('error', {error: data.error})
             : res.render(pug, {data: data})
+    }
+    const checkAdmin = (req, res, next) => {
+        axios.get('/testadmin', {headers: {Cookie: req.headers.cookie}})
+            .then(r => r.data)
+            .then(d => {
+                console.log(d)
+                d['admin'] ? next() : res.render('error', {error: 'このページを表示する権限がありません。'})
+            })
     }
     const app = express()
     app.set('views', path.join(__dirname, 'views'))
@@ -27,50 +35,44 @@ const setupExpress = () => {
 
     const router = express.Router()
     console.log(process.env.NODE_ENV)
-    const api = axios.create({baseURL: `${config.get("api-host")}/api`})
     router.get('/', (req, res) => res.render('index'))
     router.get('/ranking', (req, res) => {
-        api.get(`/ranking`)
+        axios.get(`/ranking`)
             .then(render(res, 'ranking'))
-            .catch(e => res.render('error', {error: e.code}))
     })
+    router.get('/sentences', checkAdmin)
     router.get('/sentences', (req, res) => {
-        api.get(`/sentences`, {headers: {Cookie: req.headers.cookie}})
+        axios.get(`/sentences`)
             .then(render(res, 'sentences'))
-            .catch(e => res.render('error', {error: e.code}))
     })
     router.get('/sentences/edit/:id', (req, res) => {
-        api.get(`/sentences?id=${req.params.id}`, {headers: {Cookie: req.headers.cookie}})
+        axios.get(`/sentences?id=${req.params.id}`)
             .then(render(res, 'edit_sentence'))
-            .catch(e => res.render('error', {error: e.code}))
     })
     router.get('/sentences/new', (req, res) => {
         res.render('add_sentence')
     })
     router.post('/sentences/delete', (req, res) => {
         const {sentence, kana} = req.body
-        api.post('/sentences/delete', req.body, {headers: {Cookie: req.headers.cookie}})
+        axios.post('/sentences/delete', req.body)
             .then(res => res.data)
             .then(d => d.error
                 ? res.render('error', {error: d.error})
                 : res.render('delete_sentence_complete', {sentence: sentence, kana: kana})
             )
-            .catch(e => res.render('error', {error: e.code}))
     })
     router.post('/sentences/edit', (req, res) => {
-        api.post('/sentences/edit', req.body, {headers: {Cookie: req.headers.cookie}})
+        axios.post('/sentences/edit', req.body)
             .then(() => res.redirect('/sentences'))
-            .catch(e => res.render('error', {error: e.code}))
     })
     router.post('/sentences/register', (req, res) => {
         const {sentence, kana} = req.body
-        api.post('/sentences/register', req.body, {headers: {Cookie: req.headers.cookie}})
+        axios.post('/sentences/register', req.body)
             .then(res => res.data)
             .then(d => d.error
                 ? res.render('error', {error: d.error})
                 : res.render('add_sentence_complete', {sentence: sentence, kana: kana})
             )
-            .catch(e => res.render('error', {error: e.code}))
     })
 
     app.use('/', router)
