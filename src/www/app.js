@@ -50,19 +50,27 @@ const setupExpress = () => {
     router.post('/sentences/delete', (req, res) => {
         const {sentence, kana} = req.body
         api.post('/sentences/delete', req.body, {headers: {Cookie: req.headers.cookie}})
-            .then(() => res.render('delete_sentence_complete', {sentence: sentence, kana: kana}))
+            .then(res => res.data)
+            .then(d => d.error
+                ? res.render('error', {error: d.error})
+                : res.render('delete_sentence_complete', {sentence: sentence, kana: kana})
+            )
             .catch(e => res.render('error', {error: e.code}))
     })
     router.post('/sentences/edit', (req, res) => {
         api.post('/sentences/edit', req.body, {headers: {Cookie: req.headers.cookie}})
             .then(() => res.redirect('/sentences'))
-            .catch(e => res.json(e.code))
+            .catch(e => res.render('error', {error: e.code}))
     })
     router.post('/sentences/register', (req, res) => {
         const {sentence, kana} = req.body
         api.post('/sentences/register', req.body, {headers: {Cookie: req.headers.cookie}})
-            .then(() => res.render('add_sentence_complete', {sentence: sentence, kana: kana}))
-            .catch(e => res.json(e.code))
+            .then(res => res.data)
+            .then(d => d.error
+                ? res.render('error', {error: d.error})
+                : res.render('add_sentence_complete', {sentence: sentence, kana: kana})
+            )
+            .catch(e => res.render('error', {error: e.code}))
     })
 
     app.use('/', router)
