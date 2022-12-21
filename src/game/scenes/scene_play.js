@@ -1,6 +1,6 @@
 import {HEIGHT, SCENE_LEVEL, SCENE_PLAY, SCENE_RESULT, WIDTH} from "./scene_loader";
 import CustomText from "../components/custom_text";
-import {API_URL} from "../../game";
+import {API_URL, debug} from "../../game";
 import axios from "axios";
 
 const romans = {
@@ -253,9 +253,9 @@ export class ScenePlay extends Phaser.Scene {
         }
         timer_id = setInterval(timer_task, 1000)
     }
-    startGame(sentences, debug) {
+    startGame(sentences, isDebug) {
         let timer_id
-        const time_start = debug ? 5 : 60
+        const time_start = isDebug ? 5 : 60
         let time = time_start
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -320,7 +320,7 @@ export class ScenePlay extends Phaser.Scene {
                 romanInput += key
                 inputForSentence += key
                 correctCount++
-                debug.log(romanInput, candidates, inputForSentence)
+                debug(romanInput, candidates, inputForSentence)
                 this.text_roman.text = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
                 if (romanInput === candidates[0]) {
                     kanaIndex++
