@@ -25,7 +25,7 @@ const createRouter = () => {
     })
     router.post('/edit', (req, res) => {
         axios.post('/sentences/edit', req.body, {headers: {Cookie: req.headers.cookie}})
-            .then(() => res.redirect('/sentences'))
+            .then(() => res.redirect('/admin/sentences'))
     })
     router.post('/register', (req, res) => {
         const {sentence, kana} = req.body

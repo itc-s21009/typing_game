@@ -1,7 +1,7 @@
 const confirmDelete = (id, sentence, kana) => {
     if (window.confirm(`「${sentence}」を削除しますか？`)) {
         const form = document.createElement('form')
-        form.action = `/sentences/delete`
+        form.action = `/admin/sentences/delete`
         form.method = 'post'
         document.body.appendChild(form)
         form.addEventListener('formdata', (e) => {
