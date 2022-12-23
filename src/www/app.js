@@ -7,12 +7,12 @@ const bodyParser = require('body-parser')
 const axios = require("axios")
 
 const setupExpress = () => {
-    const render = (res, pug) => d => {
-        const data = d.data
-        data.error
-            ? res.render('error', {error: data.error})
-            : res.render(pug, {data: data})
+    const testAdmin = (req, res, next) => {
+        axios.get('/testadmin', {headers: {Cookie: req.headers.cookie}})
+            .then(r => r.data)
+            .then(d => d['admin'] ? next() : res.render('error', {error: 'このページを表示する権限がありません。'}));
     }
+    axios.defaults.baseURL = `${config.get("api-host")}/api`
     const app = express()
     app.set('views', path.join(__dirname, 'views'))
     app.set('view engine', 'pug')
@@ -26,54 +26,21 @@ const setupExpress = () => {
     app.use(bodyParser.json())
 
     const router = express.Router()
+    const adminSentencesRouter = require('./routes/admin/sentences')
     console.log(process.env.NODE_ENV)
-    const api = axios.create({baseURL: `${config.get("api-host")}/api`})
     router.get('/', (req, res) => res.render('index'))
     router.get('/ranking', (req, res) => {
-        api.get(`/ranking`)
-            .then(render(res, 'ranking'))
-            .catch(e => res.render('error', {error: e.code}))
+        axios.get(`/ranking`)
+            .then((r) => res.render('ranking', {data: r.data}))
     })
-    router.get('/sentences', (req, res) => {
-        api.get(`/sentences`, {headers: {Cookie: req.headers.cookie}})
-            .then(render(res, 'sentences'))
-            .catch(e => res.render('error', {error: e.code}))
-    })
-    router.get('/sentences/edit/:id', (req, res) => {
-        api.get(`/sentences?id=${req.params.id}`, {headers: {Cookie: req.headers.cookie}})
-            .then(render(res, 'edit_sentence'))
-            .catch(e => res.render('error', {error: e.code}))
-    })
-    router.get('/sentences/new', (req, res) => {
-        res.render('add_sentence')
-    })
-    router.post('/sentences/delete', (req, res) => {
-        const {sentence, kana} = req.body
-        api.post('/sentences/delete', req.body, {headers: {Cookie: req.headers.cookie}})
-            .then(res => res.data)
-            .then(d => d.error
-                ? res.render('error', {error: d.error})
-                : res.render('delete_sentence_complete', {sentence: sentence, kana: kana})
-            )
-            .catch(e => res.render('error', {error: e.code}))
-    })
-    router.post('/sentences/edit', (req, res) => {
-        api.post('/sentences/edit', req.body, {headers: {Cookie: req.headers.cookie}})
-            .then(() => res.redirect('/sentences'))
-            .catch(e => res.render('error', {error: e.code}))
-    })
-    router.post('/sentences/register', (req, res) => {
-        const {sentence, kana} = req.body
-        api.post('/sentences/register', req.body, {headers: {Cookie: req.headers.cookie}})
-            .then(res => res.data)
-            .then(d => d.error
-                ? res.render('error', {error: d.error})
-                : res.render('add_sentence_complete', {sentence: sentence, kana: kana})
-            )
-            .catch(e => res.render('error', {error: e.code}))
-    })
+    router.get('/admin/*', testAdmin)
 
     app.use('/', router)
+    app.use('/admin/sentences', adminSentencesRouter)
+
+    app.use((req, res) => {
+        res.render('error', {error: 'No Page.'})
+    })
 
     const server = http.createServer(app)
     const port = process.env.PORT || 8080
@@ -83,3 +50,5 @@ const main = () => {
     setupExpress()
 }
 main()
+
+module.exports = axios
