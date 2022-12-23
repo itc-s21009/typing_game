@@ -19,7 +19,7 @@ block content
           td=item.sentence
           td=item.kana
           td
-            a(href=`/sentences/edit/${item.id}`) 編集
+            a(href=`/admin/sentences/edit/${item.id}`) 編集
           td
             a.del-link(href='javascript:void(0)' data-id=item.id data-sentence=item.sentence data-kana=item.kana) 削除
   script(src='/js/sentences.js')

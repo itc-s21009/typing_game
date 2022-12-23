@@ -11,7 +11,7 @@ const createRouter = () => {
             .catch(e => console.log(e))
     })
     router.get('/edit/:id', (req, res) => {
-        axios.get(`/sentences?id=${req.params.id}`)
+        axios.get(`/sentences?id=${req.params.id}`, {headers: {Cookie: req.headers.cookie}})
             .then((r) => res.render('edit_sentence', {data: r.data[0]}))
     })
     router.get('/new', (req, res) => {
@@ -19,17 +19,17 @@ const createRouter = () => {
     })
     router.post('/delete', (req, res) => {
         const {sentence, kana} = req.body
-        axios.post('/sentences/delete', req.body)
+        axios.post('/sentences/delete', req.body, {headers: {Cookie: req.headers.cookie}})
             .then(res => res.data)
             .then(() => res.render('delete_sentence_complete', {sentence: sentence, kana: kana}))
     })
     router.post('/edit', (req, res) => {
-        axios.post('/sentences/edit', req.body)
+        axios.post('/sentences/edit', req.body, {headers: {Cookie: req.headers.cookie}})
             .then(() => res.redirect('/sentences'))
     })
     router.post('/register', (req, res) => {
         const {sentence, kana} = req.body
-        axios.post('/sentences/register', req.body)
+        axios.post('/sentences/register', req.body, {headers: {Cookie: req.headers.cookie}})
             .then(res => res.data)
             .then(() => res.render('add_sentence_complete', {sentence: sentence, kana: kana}))
     })
