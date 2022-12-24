@@ -5,21 +5,21 @@ block content
     h2
     h2.text-center 文章一覧
     a(href='/admin/sentences/new')
-      btn.btn.btn-primary 文章追加
-  table.table
+      btn.btn.btn-outline-primary 文章追加
+  table.table.table-hover
     thead
       tr
         th 文章
         th かな
-        th 削除
         th 編集
+        th 削除
     tbody
       each item in data
-        tr
+        tr.align-middle
           td=item.sentence
           td=item.kana
-          td
-            a(href=`/admin/sentences/edit/${item.id}`) 編集
-          td
-            a.del-link(href='javascript:void(0)' data-id=item.id data-sentence=item.sentence data-kana=item.kana) 削除
+          td(style="width: 74px;")
+            a.btn.btn-outline-primary(href=`/admin/sentences/edit/${item.id}`) 編集
+          td(style="width: 74px;")
+            a.del-link.btn.btn-outline-danger(href='javascript:void(0)' data-id=item.id data-sentence=item.sentence data-kana=item.kana) 削除
   script(src='/js/sentences.js')
