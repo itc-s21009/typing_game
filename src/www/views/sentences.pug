@@ -8,6 +8,13 @@ block content
     h3.me-3.ms-3=`${page} ページ目`
     a.page-next.btn.btn-primary(href='javascript:void(0)' data-sentences=data data-page=page data-limit=limit) >>
   .d-flex.justify-content-end
+    select.update-limit(name='limit' data-sentences=data data-page=page)
+      option(selected=true value='10') 10
+      option(value='20') 20
+      option(value='30') 30
+      option(value='40') 40
+      option(value='50') 50
+    p.align-middle.me-3 件表示
     a(href='/admin/sentences/new')
       btn.btn.btn-outline-primary 文章追加
   table.table.table-hover

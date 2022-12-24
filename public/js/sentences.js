@@ -32,3 +32,4 @@ const updateTable = (sentences, page, limit) => {
 document.querySelectorAll('a.del-link').forEach(a => a.onclick = () => confirmDelete(a.dataset.id, a.dataset.sentence, a.dataset.kana))
 document.querySelectorAll('a.page-prev').forEach(a => a.onclick = () => updateTable(a.dataset.sentences, parseInt(a.dataset.page) - 1, a.dataset.limit))
 document.querySelectorAll('a.page-next').forEach(a => a.onclick = () => updateTable(a.dataset.sentences, parseInt(a.dataset.page) + 1, a.dataset.limit))
+document.querySelectorAll('select.update-limit').forEach(a => a.onchange = () => updateTable(a.dataset.sentences, parseInt(a.dataset.page), a.value))
