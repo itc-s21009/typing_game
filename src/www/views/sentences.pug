@@ -8,13 +8,12 @@ block content
     h3.me-3.ms-3=`${page} ページ目`
     a.page-next.btn.btn-primary(href='javascript:void(0)' data-sentences=data data-page=page data-limit=limit) >>
   .d-flex.justify-content-end
-    p.me-2 最大
-    select.update-limit(name='limit' data-sentences=data data-page=page)
+    p.me-2.mb-0.m-auto 最大
+    select.update-limit.form-select.w-auto(name='limit' data-sentences=data data-page=page)
       each value in ['10', '20', '30', '40', '50']
         option(selected=(value === limit) value=value)=value
-    p.align-middle.ms-2.me-3 件表示
-    a(href='/admin/sentences/new')
-      btn.btn.btn-outline-primary 文章追加
+    p.ms-2.me-3.mb-0.m-auto 件表示
+    a.btn.btn-outline-primary(href='/admin/sentences/new') 文章追加
   table.table.table-hover
     thead
       tr
