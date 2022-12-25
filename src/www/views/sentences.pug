@@ -11,10 +11,7 @@ block content
     p.me-2 最大
     select.update-limit(name='limit' data-sentences=data data-page=page)
       each value in ['10', '20', '30', '40', '50']
-        if value === limit
-          option(selected=true value=value)=value
-        else
-          option(value=value)=value
+        option(selected=(value === limit) value=value)=value
     p.align-middle.ms-2.me-3 件表示
     a(href='/admin/sentences/new')
       btn.btn.btn-outline-primary 文章追加
