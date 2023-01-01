@@ -5,7 +5,7 @@
   "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
+    "build": "webpack && react-scripts build",
     "start": "node ./src/www/app.js"
   },
   "repository": {
@@ -36,7 +36,6 @@
   "bugs": {
     "url": "https://github.com/itc-s21009/typing_game/issues"
   },
-  "homepage": "https://github.com/itc-s21009/typing_game#readme",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
