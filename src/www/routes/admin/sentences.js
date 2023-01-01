@@ -1,3 +1,4 @@
+const path = require("path");
 const createRouter = () => {
     const config = require("config");
     const app = require('express')
@@ -5,19 +6,7 @@ const createRouter = () => {
     const axios = require("axios").create({baseURL: `${config.get("api-host")}/api`})
     const sliceAsPage = (data, page, limit) => data.slice((page - 1) * limit, limit * page)
     router.get('/', (req, res) => {
-        const page = 1
-        const limit = 10
-        axios.get(`/sentences`, {headers: {Cookie: req.headers.cookie}})
-            .then(r => r.data)
-            .then(data => {
-                res.render('sentences', {
-                    data: data,
-                    page: page,
-                    limit: limit,
-                    dataToDisplay: sliceAsPage(data, page, limit)
-                })
-            })
-            .catch(e => console.log(e))
+        res.sendFile(path.join(__dirname, '..', '..', '..', '..',  'build', 'index.html'))
     })
     router.post('/', (req, res) => {
         const {page, limit} = req.body

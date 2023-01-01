@@ -18,7 +18,6 @@ const setupExpress = () => {
     app.set('view engine', 'pug')
 
     app.use(cookieParser())
-    app.use(express.static(path.join(__dirname, '..', '..', 'public')));
 
     app.use(bodyParser.urlencoded({
         extended: true
@@ -37,6 +36,7 @@ const setupExpress = () => {
 
     app.use('/', router)
     app.use('/admin/sentences', adminSentencesRouter)
+    app.use(express.static(path.join(__dirname, '..', '..', 'build')));
 
     app.use((req, res) => {
         res.render('error', {error: 'No Page.'})
