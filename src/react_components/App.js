@@ -26,13 +26,6 @@ const App = () => {
     }
     const limitOptions = [10, 20, 30, 40, 50]
 
-    const sortFunctions = {
-        'new': (a, b) => a.id < b.id ? 1 : -1,
-        'old': (a, b) => a.id > b.id ? 1 : -1,
-        'long': (a, b) => a.kana.length < b.kana.length ? 1 : -1,
-        'short': (a, b) => a.kana.length > b.kana.length ? 1 : -1,
-    }
-
     const [page, setPage] = useState(1)
     const [order, setOrder] = useState(Object.keys(orderOptions)[0])    // => new
     const [limit, setLimit] = useState(limitOptions[0])                 // => 10
@@ -46,6 +39,12 @@ const App = () => {
             .then(d => setData(d))
     }
     const updateDataOnTable = () => {
+        const sortFunctions = {
+            'new': (a, b) => a.id < b.id ? 1 : -1,
+            'old': (a, b) => a.id > b.id ? 1 : -1,
+            'long': (a, b) => a.kana.length < b.kana.length ? 1 : -1,
+            'short': (a, b) => a.kana.length > b.kana.length ? 1 : -1,
+        }
         const copyOfData = Array(...data)
         copyOfData.sort(sortFunctions[order])
         setDataOnTable(copyOfData.splice((page - 1) * limit, limit))
@@ -64,8 +63,8 @@ const App = () => {
                     <a href={`/admin/sentences/edit/${d.id}`} className="btn btn-outline-primary">編集</a>
                 </td>
                 <td style={{minWidth: '74px'}}>
-                    <a href="javascript:void(0)" className="del-link btn btn-outline-danger"
-                       onClick={() => confirmDelete(d.id, d.sentence, d.kana)}>削除</a>
+                    <button className="del-link btn btn-outline-danger"
+                       onClick={() => confirmDelete(d.id, d.sentence, d.kana)}>削除</button>
                 </td>
             </tr>
         )
@@ -127,7 +126,6 @@ const App = () => {
                 </div>
             </div>
             <ShowTable/>
-            <script src="/js/sentences.js"></script>
         </>
     )
 }

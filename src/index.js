@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOMClient from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import App from "./react_components/App";
 
-ReactDOMClient.hydrateRoot(document.getElementById('admin-sentences'), <App />);
+ReactDOM.render(<App />, document.getElementById('admin-sentences'))
