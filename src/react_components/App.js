@@ -35,7 +35,7 @@ const App = () => {
 
     const [page, setPage] = useState(1)
     const [order, setOrder] = useState(Object.keys(orderOptions)[0])    // => new
-    const [limit, setLimit] = useState(limitOptions[0])         // => 10
+    const [limit, setLimit] = useState(limitOptions[0])                 // => 10
     const [data, setData] = useState([])
     const [dataOnTable, setDataOnTable] = useState([])
 
@@ -52,6 +52,7 @@ const App = () => {
     }
     useEffect(fetchData, [API_URL])
     useEffect(updateDataOnTable, [data, page, order, limit])
+
     const ShowOrderOptions = () => Object.keys(orderOptions).map(k => <option value={k}>{orderOptions[k]}</option>)
     const ShowLimitOptions = () => limitOptions.map(k => <option value={k}>{k}</option>)
     const ShowTableRows = () =>
@@ -82,6 +83,20 @@ const App = () => {
             <ShowTableRows/>
             </tbody>
         </table>
+    const getLastPage = (length, limit) => Math.ceil(length / limit)
+    const handleChangePage = (page) => {
+        if (page <= 0 || page > getLastPage(data.length, limit)) {
+            return
+        }
+        setPage(page)
+    }
+    const handleChangeLimit = (limit) => {
+        const lastPage = getLastPage(data.length, limit)
+        setLimit(limit)
+        if (page > lastPage) {
+            setPage(lastPage)
+        }
+    }
     return (
         <>
             <h2 className="ms-2">文章一覧</h2>
@@ -93,18 +108,18 @@ const App = () => {
                     </select>
                 </div>
                 <div className="d-flex justify-content-center">
-                    <button className="page-prev btn btn-primary" onClick={() => setPage(page - 1)}>
+                    <button className="page-prev btn btn-primary" onClick={() => handleChangePage(page - 1)}>
                         <i className="bi bi-caret-left"></i>
                     </button>
                     <h3 className="me-3 ms-3">{page} ページ目</h3>
-                    <button className="page-next btn btn-primary" onClick={() => setPage(page + 1)}>
+                    <button className="page-next btn btn-primary" onClick={() => handleChangePage(page + 1)}>
                         <i className="bi bi-caret-right"></i>
                     </button>
                 </div>
                 <div className="d-flex justify-content-end">
                     <p className="me-2 mb-0 m-auto">最大</p>
                     <select className="form-select w-auto" value={limit}
-                            onChange={(e) => setLimit(parseInt(e.target.value))}>
+                            onChange={(e) => handleChangeLimit(parseInt(e.target.value))}>
                         <ShowLimitOptions/>
                     </select>
                     <p className="ms-2 me-3 mb-0 m-auto">件表示</p>
