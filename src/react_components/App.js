@@ -26,6 +26,13 @@ const App = () => {
     }
     const limitOptions = [10, 20, 30, 40, 50]
 
+    const sortFunctions = {
+        'new': (a, b) => a.id < b.id ? 1 : -1,
+        'old': (a, b) => a.id > b.id ? 1 : -1,
+        'long': (a, b) => a.kana.length < b.kana.length ? 1 : -1,
+        'short': (a, b) => a.kana.length > b.kana.length ? 1 : -1,
+    }
+
     const [page, setPage] = useState(1)
     const [order, setOrder] = useState(Object.keys(orderOptions)[0])    // => new
     const [limit, setLimit] = useState(limitOptions[0])         // => 10
@@ -38,7 +45,11 @@ const App = () => {
             .then(r => r.data)
             .then(d => setData(d))
     }
-    const updateDataOnTable = () => setDataOnTable(Array(...data).splice((page - 1) * limit, limit))
+    const updateDataOnTable = () => {
+        const copyOfData = Array(...data)
+        copyOfData.sort(sortFunctions[order])
+        setDataOnTable(copyOfData.splice((page - 1) * limit, limit))
+    }
     useEffect(fetchData, [API_URL])
     useEffect(updateDataOnTable, [data, page, order, limit])
     const ShowOrderOptions = () => Object.keys(orderOptions).map(k => <option value={k}>{orderOptions[k]}</option>)
