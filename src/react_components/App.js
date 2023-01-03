@@ -2,27 +2,47 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 
 const App = () => {
-    const [page, setPage] = useState(1)
-    const [data, setData] = useState([])
-    const [dataOnTable, setDataOnTable] = useState([])
-    const options = {
+    const confirmDelete = (id, sentence, kana) => {
+        if (window.confirm(`「${sentence}」を削除しますか？`)) {
+            const form = document.createElement('form')
+            form.action = `/admin/sentences/delete`
+            form.method = 'post'
+            document.body.appendChild(form)
+            form.addEventListener('formdata', (e) => {
+                const data = e.formData
+                data.set('id', id)
+                data.set('sentence', sentence)
+                data.set('kana', kana)
+            })
+            form.submit()
+        }
+    }
+
+    const orderOptions = {
         'new': '新しい順',
         'old': '古い順',
         'long': '文字数が長い順',
         'short': '文字数が短い順',
     }
+    const limitOptions = [10, 20, 30, 40, 50]
+
+    const [page, setPage] = useState(1)
+    const [order, setOrder] = useState(Object.keys(orderOptions)[0])    // => new
+    const [limit, setLimit] = useState(limitOptions[0])         // => 10
+    const [data, setData] = useState([])
+    const [dataOnTable, setDataOnTable] = useState([])
+
     const API_URL = 'http://localhost:3000'
     const fetchData = () => {
         axios.get(`${API_URL}/api/sentences`, {withCredentials: true})
             .then(r => r.data)
             .then(d => setData(d))
     }
-    useEffect(fetchData, [data, API_URL])
-    useEffect(() => {
-        setDataOnTable(data)
-    }, [data])
-    const ShowOrderOptions = () => Object.keys(options).map(k => <option value={k}>{options[k]}</option>)
-    const ShowLimitOptions = () => [10, 20, 30, 40, 50].map(k => <option value={k}>{k}</option>)
+    const updateDataOnTable = () => setDataOnTable(Array(...data).splice((page - 1) * limit, limit))
+    useEffect(fetchData, [API_URL])
+    useEffect(updateDataOnTable, [data, page, order, limit])
+    const ShowOrderOptions = () => Object.keys(orderOptions).map(k => <option value={k}>{orderOptions[k]}</option>)
+    const ShowLimitOptions = () => limitOptions.map(k => <option value={k}>{k}</option>)
     const ShowTableRows = () =>
         dataOnTable.map(d =>
             <tr className="align-middle">
@@ -33,7 +53,7 @@ const App = () => {
                 </td>
                 <td style={{minWidth: '74px'}}>
                     <a href="javascript:void(0)" className="del-link btn btn-outline-danger"
-                       data-id={d.id} data-sentence={d.sentence} data-kana={d.kana}>削除</a>
+                       onClick={() => confirmDelete(d.id, d.sentence, d.kana)}>削除</a>
                 </td>
             </tr>
         )
@@ -56,7 +76,8 @@ const App = () => {
             <h2 className="ms-2">文章一覧</h2>
             <div className="d-flex justify-content-between">
                 <div>
-                    <select className="update-order form-select w-auto" name="order">
+                    <select className="form-select w-auto" value={order}
+                            onChange={(e) => setOrder(e.target.value)}>
                         <ShowOrderOptions/>
                     </select>
                 </div>
@@ -71,7 +92,8 @@ const App = () => {
                 </div>
                 <div className="d-flex justify-content-end">
                     <p className="me-2 mb-0 m-auto">最大</p>
-                    <select className="update-limit form-select w-auto" name="limit">
+                    <select className="form-select w-auto" value={limit}
+                            onChange={(e) => setLimit(parseInt(e.target.value))}>
                         <ShowLimitOptions/>
                     </select>
                     <p className="ms-2 me-3 mb-0 m-auto">件表示</p>
