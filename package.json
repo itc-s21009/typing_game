@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack && react-scripts build",
+    "build": "webpack && dotenv -e .env.production react-scripts build",
+    "build:dev": "webpack && dotenv -e .env.development react-scripts build",
     "start": "node ./src/www/app.js"
   },
   "repository": {
@@ -54,5 +55,8 @@
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^6.0.0"
   }
 }

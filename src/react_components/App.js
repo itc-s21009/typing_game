@@ -32,9 +32,8 @@ const App = () => {
     const [data, setData] = useState([])
     const [dataOnTable, setDataOnTable] = useState([])
 
-    const API_URL = 'http://localhost:3000'
     const fetchData = () => {
-        axios.get(`${API_URL}/api/sentences`, {withCredentials: true})
+        axios.get(`${process.env.REACT_APP_API_HOST}/api/sentences`, {withCredentials: true})
             .then(r => r.data)
             .then(d => setData(d))
     }
@@ -49,7 +48,7 @@ const App = () => {
         copyOfData.sort(sortFunctions[order])
         setDataOnTable(copyOfData.splice((page - 1) * limit, limit))
     }
-    useEffect(fetchData, [API_URL])
+    useEffect(fetchData, [])
     useEffect(updateDataOnTable, [data, page, order, limit])
 
     const ShowOrderOptions = () => Object.keys(orderOptions).map(k => <option value={k}>{orderOptions[k]}</option>)
