@@ -230,6 +230,7 @@ export class ScenePlay extends Phaser.Scene {
     text_timer
     text_display
     text_roman
+    text_typed
     text_stats
 
     constructor() {
@@ -340,8 +341,17 @@ export class ScenePlay extends Phaser.Scene {
                 romanInput += key
                 inputForSentence += key
                 correctCount++
-                debug(romanInput, candidates, inputForSentence)
-                this.text_roman.text = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
+                debug(`${romanInput}, ${candidates}, ${inputForSentence}`)
+                let displayTyped = inputForSentence
+                let displayRoman = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
+                for (let i = 0; i < displayRoman.length; i++) {
+                    displayTyped = `${displayTyped} `
+                }
+                for (let i = 0; i < inputForSentence.length; i++) {
+                    displayRoman = ` ${displayRoman}`
+                }
+                this.text_typed.text = displayTyped
+                this.text_roman.text = displayRoman
                 if (romanInput === candidates[0]) {
                     kanaIndex++
                     romanInput = ''
@@ -426,6 +436,7 @@ export class ScenePlay extends Phaser.Scene {
             romanInput = ''
             inputForSentence = ''
             this.text_roman.text = kanaToRoman(sentence['kana'])
+            this.text_typed.text = ''
             this.text_display.text = sentence['sentence']
         }
         const createTimer = () => {
@@ -438,7 +449,12 @@ export class ScenePlay extends Phaser.Scene {
             this.text_roman = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
                 .setOrigin(0.5, 1)
                 .setFontSize(28)
-                .setFontFamily('MS UI Gothic')
+                .setFontFamily('Courier New')
+                .setColor('#505050')
+            this.text_typed = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
+                .setOrigin(0.5, 1)
+                .setFontSize(28)
+                .setFontFamily('Courier New')
             this.text_display = new CustomText(this, WIDTH / 2, HEIGHT / 2, '')
                 .setOrigin(0.5, 1)
                 .setFontSize(28)
@@ -446,6 +462,7 @@ export class ScenePlay extends Phaser.Scene {
             this.text_stats = new CustomText(this, 0, HEIGHT - 180, '')
                 .setFontSize(32)
             this.add.existing(this.text_roman)
+            this.add.existing(this.text_typed)
             this.add.existing(this.text_display)
             this.add.existing(this.text_stats)
         }
