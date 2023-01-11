@@ -324,10 +324,26 @@ export class ScenePlay extends Phaser.Scene {
         // ]
         // のように並ぶ
         let kanaRomanMap
-        let kanaIndex           // 今打ってる文字の位置
-        let romanInput          // 今打ってる文字に対して、どんなキーで正しく打ったか
-        let inputForSentence    // 出題中の文章に対して、どんなキーで正しく打ったか
-        let charForT            // 「kko(っこ)」のように重ねて入力する場合、何を重ねたかの記録用（この場合はk）
+        /** 今打ってる文字の位置 */
+        let kanaIndex
+        /** 今打ってる文字に対して、どんなキーで正しく打ったか */
+        let romanInput
+        /** 出題中の文章に対して、どんなキーで正しく打ったか */
+        let inputForSentence
+        /** 「kko(っこ)」のように重ねて入力する場合、何を重ねたかの記録用（この場合はk） */
+        let charForT
+        const updateDisplayedText = (nextCandidate) => {
+            let displayTyped = inputForSentence
+            let displayRoman = `${romanInput === nextCandidate ? '' : nextCandidate.slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
+            for (let i = 0; i < displayRoman.length; i++) {
+                displayTyped = `${displayTyped} `
+            }
+            for (let i = 0; i < inputForSentence.length; i++) {
+                displayRoman = ` ${displayRoman}`
+            }
+            this.text_typed.text = displayTyped
+            this.text_roman.text = displayRoman
+        }
         const checkByCandidates = (candidates, key) => {
             // 2文字目以降で、前の文字が「っ」で、重ねる入力方法をしていた場合
             if (kanaIndex > 0 && charForT !== '' && kanaRomanMap[kanaIndex - 1].kana === 'っ') {
@@ -342,16 +358,7 @@ export class ScenePlay extends Phaser.Scene {
                 inputForSentence += key
                 correctCount++
                 debug(`${romanInput}, ${candidates}, ${inputForSentence}`)
-                let displayTyped = inputForSentence
-                let displayRoman = `${romanInput === candidates[0] ? '' : candidates[0].slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
-                for (let i = 0; i < displayRoman.length; i++) {
-                    displayTyped = `${displayTyped} `
-                }
-                for (let i = 0; i < inputForSentence.length; i++) {
-                    displayRoman = ` ${displayRoman}`
-                }
-                this.text_typed.text = displayTyped
-                this.text_roman.text = displayRoman
+                updateDisplayedText(candidates[0])
                 if (romanInput === candidates[0]) {
                     kanaIndex++
                     romanInput = ''
@@ -394,6 +401,7 @@ export class ScenePlay extends Phaser.Scene {
                             inputForSentence += e.key
                             // 重ねたキーを記録
                             charForT = e.key
+                            updateDisplayedText(nextChar.roman[0])
                             // 正しい入力としてカウントする
                             correctCount++
                             updateStats()
