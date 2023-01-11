@@ -384,13 +384,16 @@ export class ScenePlay extends Phaser.Scene {
                 const nextRomanChar = nextChar.roman[0][0]
                 // 今打ってる文字が「ん」で、「n」まで打ってる時
                 const condN = d.kana === 'ん' && romanInput === 'n'
+                // 次の文字が母音の場合
+                const condB = 'あいうえお'.split('').includes(nextChar.kana)
                 // 今打ってる文字が「っ」で、次の文字が母音じゃない場合
-                const condT = d.kana === 'っ' && !'あいうえお'.split('').includes(nextChar.kana)
+                const condT = d.kana === 'っ' && !condB
                 // 次の文字が「っ」以外の小文字の場合
                 const condY = 'ぁぃぅぇぉゃゅょ'.includes(nextChar.kana)
                 if (condN || condT) {
-                    // 次の文字の最初のローマ字がnと句読点以外で、それが打ったキーと一致した場合
-                    if (!'n,.'.includes(nextRomanChar) && nextChar.roman.filter(r => r.startsWith(e.key)).length > 0) {
+                    debug(`nextRomanChar ${nextRomanChar}`)
+                    // 次の文字の最初のローマ字がnと句読点以外で、母音以外で、それが打ったキーと一致した場合
+                    if (!'n,.'.includes(nextRomanChar) && !condB && nextChar.roman.filter(r => r.startsWith(e.key)).length > 0) {
                         kanaIndex++
                         romanInput = ''
                         if (condN) {
