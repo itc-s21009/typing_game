@@ -3,6 +3,13 @@ import CustomText from "../components/custom_text";
 import {API_URL, debug} from "../../game";
 import axios from "axios";
 
+/**
+ * @typedef {{id: number, sentence: string, kana: string}} Sentence
+ */
+/**
+ * @typedef {{kana: string, roman: string[]}} KanaChar
+ */
+
 const romans = {
     'あ': ['a'],
     'い': ['i', 'yi'],
@@ -238,24 +245,35 @@ export class ScenePlay extends Phaser.Scene {
     }
 
     create({difficulty, debug}) {
-        if (difficulty === undefined) {
-            this.add.existing(new CustomText(this, WIDTH / 2, HEIGHT / 2, 'エラー\ndifficultyがないです')
+        const drawError = (msg) => {
+            eraseLoadingText()
+            this.add.existing(new CustomText(this, WIDTH / 2, HEIGHT / 2, `エラー\n${msg}`)
                 .setCentered(true)
-                .setAlign('center'))
+                .setAlign('center')
+                .setFontSize(40)
+            )
+        }
+        const drawLoadingText = () => {
+            this.text_loading = new CustomText(this, WIDTH / 2, HEIGHT / 2, '読み込み中...')
+                .setCentered(true)
+                .setAlign('center')
+            this.add.existing(this.text_loading)
+        }
+        const eraseLoadingText = () => this.text_loading ? this.text_loading.destroy() : {}
+        if (difficulty === undefined) {
+            drawError('難易度が設定できませんでした')
             return
         }
-        this.text_loading = new CustomText(this, WIDTH / 2, HEIGHT / 2, '読み込み中...')
-            .setCentered(true)
-            .setAlign('center')
-        this.add.existing(this.text_loading)
+        drawLoadingText()
         axios.get(`${API_URL}/api/sentences?min=${difficulty.min}&max=${difficulty.max}`)
             .then(r => r.data)
             .then(sentences => {
-                this.text_loading.destroy()
+                eraseLoadingText()
                 this.startCountdown(() => this.startGame(sentences, debug))
             })
-            .catch((e) => this.text_loading.text = "エラー\nお題の文章を\n読み込めませんでした")
+            .catch((e) => drawError('お題の文章が読み込めませんでした'))
     }
+
     startCountdown(callback) {
         let timer_id
         let time = 3
@@ -274,6 +292,7 @@ export class ScenePlay extends Phaser.Scene {
         }
         timer_id = setInterval(timer_task, 1000)
     }
+
     startGame(sentences, isDebug) {
         let timer_id
         const time_start = isDebug ? 5 : 60
@@ -286,6 +305,11 @@ export class ScenePlay extends Phaser.Scene {
         })
         let typeCount = 0       // 全入力回数
         let correctCount = 0    // 正しい入力回数
+
+        /**
+         * 今の時点での成績を取得する関数
+         * @returns {{score: number, accuracy: number, keysPerSecond: number, miss: number}}
+         */
         const getCalculatedStats = () => {
             const miss = typeCount - correctCount
             const accuracy = Math.round(correctCount / typeCount * 100 * 10) / 10
@@ -297,32 +321,48 @@ export class ScenePlay extends Phaser.Scene {
             const {miss, accuracy, keysPerSecond, score} = getCalculatedStats()
             this.text_stats.text = `(後で消す)\nミス数: ${miss}\n正確率: ${accuracy}%\nキー/秒: ${keysPerSecond}\nスコア: ${score}`
         }
-        // 「しゅ」とかのローマ字一覧に「し」と「ゅ」のローマ字一覧を全部まとめる
-        // 「しゅ」の場合は「し」に3個、「ゅ」に2個、「しゅ」に元々2個候補があるので、
-        // 3x2+2 で最終的に「しゅ」の要素数は8になるはず
-        // 'し': [ 'si', 'shi', 'ci' ],
-        // 'ゅ': [ 'lyu', 'xyu' ],
-        // 'しゅ': [
-        //   'syu',    'shu',
-        //   'silyu',  'sixyu',
-        //   'shilyu', 'shixyu',
-        //   'cilyu',  'cixyu'
-        // ]
-        const prepareForSmallChars = () => Object.keys(romans).filter(k => k.length === 2).forEach(str => {
+
+        /**
+         * 「しゅ」とかのローマ字一覧に「し」と「ゅ」のローマ字一覧を全部まとめる関数
+         * 「しゅ」の場合は「し」に3個、「ゅ」に2個、「しゅ」に元々2個候補があるので、
+         * 3x2+2 で最終的に「しゅ」の要素数は8になるはず
+         * 'し': [ 'si', 'shi', 'ci' ],
+         * 'ゅ': [ 'lyu', 'xyu' ],
+         * 'しゅ': [
+         *     'syu',    'shu',
+         *     'silyu',  'sixyu',
+         *     'shilyu', 'shixyu',
+         *     'cilyu',  'cixyu'
+         * ]
+         */
+        const registerSmallChars = () => Object.keys(romans).filter(k => k.length === 2).forEach(str => {
             const chars = str.split('')
             const [romanList1, romanList2] = [romans[chars[0]], romans[chars[1]]]
-            const condidatesToAdd = romanList1.map(x => romanList2.map(y => `${x}${y}`)).flat()
-            romans[str].push(...condidatesToAdd)
+            const candidatesToAdd = romanList1.map(x => romanList2.map(y => `${x}${y}`)).flat()
+            romans[str].push(...candidatesToAdd)
         })
+
+        /**
+         * ひらがなでできた文字列を、１文字ずつローマ字に変換する関数
+         * @param {string} kana ひらがなでできた文字列
+         * @returns {string}    ローマ字にした結果を返します
+         */
         const kanaToRoman = (kana) => kana.split('').map(k => romans[k][0]).join('')
-        let qSentences = []     // 出題する文章のキュー
-        let sentence            // 出題中の文章
-        // 出題中の文章の、かなとローマ字の連想配列のリスト
-        // [
-        //   {kana: 'か', roman: ['ka', 'ca']}
-        //   {kana: 'な', roman: ['na']},
-        // ]
-        // のように並ぶ
+
+        /**
+         * 出題する文章のキュー
+         * @type {Sentence[]}
+         */
+        let qSentences = []
+        /**
+         * 出題中の文章
+         * @type {Sentence}
+         */
+        let sentence
+        /**
+         * 出題中の文章の、かなとローマ字の連想配列のリスト
+         * @type {KanaChar[]}
+         */
         let kanaRomanMap
         /** 今打ってる文字の位置 */
         let kanaIndex
@@ -332,6 +372,11 @@ export class ScenePlay extends Phaser.Scene {
         let inputForSentence
         /** 「kko(っこ)」のように重ねて入力する場合、何を重ねたかの記録用（この場合はk） */
         let charForT
+
+        /**
+         * ローマ字の部分の表示を更新する関数
+         * @param {string} nextCandidate    今打ってる文字のローマ字入力パターンの候補
+         */
         const updateDisplayedText = (nextCandidate) => {
             let displayTyped = inputForSentence
             let displayRoman = `${romanInput === nextCandidate ? '' : nextCandidate.slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
@@ -344,7 +389,15 @@ export class ScenePlay extends Phaser.Scene {
             this.text_typed.text = displayTyped
             this.text_roman.text = displayRoman
         }
-        const checkByCandidates = (candidates, key) => {
+
+        /**
+         * パターンの候補がある場合にタイピングを進める関数
+         * @param {string[]} candidates 次の文字のローマ字入力パターンの候補の配列
+         * @param {string} key          打ったキー
+         */
+        const attemptToType = (candidates, key) => {
+            // 候補の中から、今入力可能なものだけに絞る
+            candidates = candidates.filter(r => r.startsWith(`${romanInput}${key}`))
             // 2文字目以降で、前の文字が「っ」で、重ねる入力方法をしていた場合
             if (kanaIndex > 0 && charForT !== '' && kanaRomanMap[kanaIndex - 1].kana === 'っ') {
                 // 前回重ねた文字を使った打ち方のみ残す
@@ -372,6 +425,7 @@ export class ScenePlay extends Phaser.Scene {
                 }
             }
         }
+
         this.input.keyboard.on('keydown', (e) => {
             if (time < 0) {
                 return
@@ -414,7 +468,9 @@ export class ScenePlay extends Phaser.Scene {
                     }
                 } else if (condY) {
                     // 「ち」+「ゃ」のように連結して、存在するパターンかをチェックする
+                    /** 今の文字と次の文字を連結する */
                     const candidateKana = `${d.kana}${nextChar.kana}`
+                    /** 連結した文字のローマ字入力パターンを取得する */
                     const candidateKanaData = romans[candidateKana]
                     // パターンが存在した場合
                     if (candidateKanaData !== undefined) {
@@ -430,8 +486,7 @@ export class ScenePlay extends Phaser.Scene {
                     }
                 }
             }
-            const candidates = d.roman.filter(r => r.startsWith(`${romanInput}${e.key}`))
-            checkByCandidates(candidates, e.key)
+            attemptToType(d.roman, e.key)
             updateStats()
         })
         const showRandomSentence = () => {
@@ -442,13 +497,13 @@ export class ScenePlay extends Phaser.Scene {
                 qSentences = [...Array(sentencesCopy.length)].map(() => sentencesCopy.splice(Math.floor(Math.random() * sentencesCopy.length), 1)[0])
             }
             sentence = qSentences.pop()
-            kanaRomanMap = sentence['kana'].split('').map(k => ({kana: k, roman: romans[k]}))
+            kanaRomanMap = sentence.kana.split('').map(k => ({kana: k, roman: romans[k]}))
             kanaIndex = 0
             romanInput = ''
             inputForSentence = ''
-            this.text_roman.text = kanaToRoman(sentence['kana'])
+            this.text_roman.text = kanaToRoman(sentence.kana)
             this.text_typed.text = ''
-            this.text_display.text = sentence['sentence']
+            this.text_display.text = sentence.sentence
         }
         const createTimer = () => {
             this.text_timer = new CustomText(this, 0, 0, '')
@@ -497,7 +552,7 @@ export class ScenePlay extends Phaser.Scene {
             timer_task()
             timer_id = setInterval(timer_task, 1000)
         }
-        prepareForSmallChars()
+        registerSmallChars()
         initTextArea()
         createTimer()
         startTimer()
