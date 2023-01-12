@@ -237,6 +237,7 @@ export class ScenePlay extends Phaser.Scene {
     text_timer
     text_display
     text_roman
+    text_next_char
     text_typed
     text_stats
 
@@ -343,13 +344,6 @@ export class ScenePlay extends Phaser.Scene {
         })
 
         /**
-         * ひらがなでできた文字列を、１文字ずつローマ字に変換する関数
-         * @param {string} kana ひらがなでできた文字列
-         * @returns {string}    ローマ字にした結果を返します
-         */
-        const kanaToRoman = (kana) => kana.split('').map(k => romans[k][0]).join('')
-
-        /**
          * 出題する文章のキュー
          * @type {Sentence[]}
          */
@@ -380,13 +374,18 @@ export class ScenePlay extends Phaser.Scene {
         const updateDisplayedText = (nextCandidate) => {
             let displayTyped = inputForSentence
             let displayRoman = `${romanInput === nextCandidate ? '' : nextCandidate.slice(romanInput.length)}${kanaRomanMap.slice(kanaIndex + 1).map(d => d.roman[0]).join('')}`
+            let displayNextChar = ' ' + displayRoman[0]
             for (let i = 0; i < displayRoman.length; i++) {
-                displayTyped = `${displayTyped} `
+                displayNextChar = displayNextChar + ' '
+                displayTyped = displayTyped + ' '
             }
+            displayRoman = ' ' + displayRoman.slice(1)
             for (let i = 0; i < inputForSentence.length; i++) {
-                displayRoman = ` ${displayRoman}`
+                displayNextChar = ' ' + displayNextChar
+                displayRoman = ' ' + displayRoman
             }
             this.text_typed.text = displayTyped
+            this.text_next_char.text = displayNextChar
             this.text_roman.text = displayRoman
         }
 
@@ -501,9 +500,8 @@ export class ScenePlay extends Phaser.Scene {
             kanaIndex = 0
             romanInput = ''
             inputForSentence = ''
-            this.text_roman.text = kanaToRoman(sentence.kana)
-            this.text_typed.text = ''
             this.text_display.text = sentence.sentence
+            updateDisplayedText(kanaRomanMap[0].roman[0])
         }
         const createTimer = () => {
             this.text_timer = new CustomText(this, 0, 0, '')
@@ -517,6 +515,11 @@ export class ScenePlay extends Phaser.Scene {
                 .setFontSize(28)
                 .setFontFamily('Courier New')
                 .setColor('#505050')
+            this.text_next_char = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
+                .setOrigin(0.5, 1)
+                .setFontSize(28)
+                .setFontFamily('Courier New')
+                .setColor('#000080')
             this.text_typed = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
                 .setOrigin(0.5, 1)
                 .setFontSize(28)
@@ -528,6 +531,7 @@ export class ScenePlay extends Phaser.Scene {
             this.text_stats = new CustomText(this, 0, HEIGHT - 180, '')
                 .setFontSize(32)
             this.add.existing(this.text_roman)
+            this.add.existing(this.text_next_char)
             this.add.existing(this.text_typed)
             this.add.existing(this.text_display)
             this.add.existing(this.text_stats)
