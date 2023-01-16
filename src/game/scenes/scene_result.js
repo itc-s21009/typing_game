@@ -15,6 +15,10 @@ export class SceneResult extends Phaser.Scene {
                 this.scene.start(SCENE_TITLE)
             }
         })
+        score = isNaN(score) ? 0 : score
+        speed = isNaN(speed) ? 0 : speed
+        miss = isNaN(miss) ? 0 : miss
+        accuracy = isNaN(accuracy) ? 0 : accuracy
         this.add.existing(new CustomText(this, WIDTH / 2, 50, '結果')
             .setAlignCenterHorizontally(true)
             .setFontSize(60))
