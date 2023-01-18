@@ -11,6 +11,8 @@ git clone https://github.com/itc-s21009/typing_game.git
 cd typing_game
 # 必要なパッケージをダウンロードする
 npm i
+# 公開するファイルをビルドする
+npm run build
 # 起動する
-npm start
+npm run start
 ```
