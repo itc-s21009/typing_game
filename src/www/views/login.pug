@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  .container.w-25
+    h3.text-center.m-3 ログイン
+    form(method='post' action='/login')
+      .mb-3
+        label.form-label(for='username') ユーザー名
+        input#username.form-control(type='text' name='username' required=true)
+      .mb-3
+        label.form-label(for='password') パスワード
+        input#password.form-control(type='password' name='password' required=true)
+      .mb-3.text-center
+        button.btn.btn-primary.w-50 ログイン

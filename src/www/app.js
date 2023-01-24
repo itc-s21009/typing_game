@@ -32,6 +32,7 @@ const setupExpress = () => {
         axios.get(`/ranking`)
             .then((r) => res.render('ranking', {data: r.data}))
     })
+    router.get('/login', (req, res) => res.render('login'))
     router.get('/admin/*', testAdmin)
 
     app.use('/', router)
