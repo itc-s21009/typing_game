@@ -26,17 +26,18 @@ const setupExpress = () => {
 
     const router = express.Router()
     const adminSentencesRouter = require('./routes/admin/sentences')
+    const authRouter = require('./routes/auth')
     console.log(process.env.NODE_ENV)
     router.get('/', (req, res) => res.render('index'))
     router.get('/ranking', (req, res) => {
         axios.get(`/ranking`)
             .then((r) => res.render('ranking', {data: r.data}))
     })
-    router.get('/login', (req, res) => res.render('login'))
     router.get('/admin/*', testAdmin)
 
     app.use('/', router)
     app.use('/admin/sentences', adminSentencesRouter)
+    app.use(authRouter)
     app.use(express.static(path.join(__dirname, '..', '..', 'build')));
 
     app.use((req, res) => {
