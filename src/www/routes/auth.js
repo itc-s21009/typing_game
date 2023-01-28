@@ -29,15 +29,19 @@ const createRouter = () => {
     setupPassport()
     const express = require('express')
     const router = express.Router()
-    router.get('/login', (req, res) => res.render('login', {error: req.flash('error')}))
-    router.post('/login', function(req, res, next) {
-        passport.authenticate('local', function(err, user) {
+    router.get('/login', (req, res) => res.render('login', {
+        error: req.flash('error'),
+        username: req.flash('username')[0] // [0]がないと、「user」にしたいところがなぜか「["user"]」になってしまう
+    }))
+    router.post('/login', function (req, res, next) {
+        passport.authenticate('local', function (err, user) {
             if (err) return next(err)
             if (!user) {
+                req.flash('username', req.body.username)
                 req.flash('error', 'ユーザー名かパスワードが違います')
                 return res.redirect('login')
             }
-            req.logIn(user, function(err) {
+            req.logIn(user, function (err) {
                 if (err) return next(err)
                 return res.redirect('/')
             })
