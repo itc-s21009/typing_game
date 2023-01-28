@@ -11,6 +11,9 @@ html(lang='ja')
       h1
         a(href='/').text-decoration-none.text-primary タイピングゲーム
       h4
-        a(href='/login').text-decoration-none.text-primary ログイン
+        if user
+          p #{user} としてログイン中
+        else
+          a(href='/login').text-decoration-none.text-primary ログイン
     hr
     block content

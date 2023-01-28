@@ -18,7 +18,7 @@ const setupPassport = () => {
             .catch(e => callback(e))
     }))
     passport.serializeUser((user, callback) => {
-        process.nextTick(() => callback(null, {id: user.id}))
+        process.nextTick(() => callback(null, user))
     })
     passport.deserializeUser((user, callback) => {
         process.nextTick(() => callback(null, user))

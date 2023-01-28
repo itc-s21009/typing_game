@@ -11,11 +11,6 @@ const passport = require('passport')
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn()
 
 const setupExpress = () => {
-    const testAdmin = (req, res, next) => {
-        axios.get('/testadmin', {headers: {Cookie: req.headers.cookie}})
-            .then(r => r.data)
-            .then(d => d['admin'] ? next() : res.render('error', {error: 'このページを表示する権限がありません。'}));
-    }
     axios.defaults.baseURL = `${config.get("api-host")}/api`
     const app = express()
     app.set('views', path.join(__dirname, 'views'))
@@ -40,12 +35,12 @@ const setupExpress = () => {
     const adminSentencesRouter = require('./routes/admin/sentences')
     const authRouter = require('./routes/auth')
     console.log(process.env.NODE_ENV)
-    router.get('/', (req, res) => res.render('index'))
+    router.get('/', (req, res) => res.render('index', {user: req.user}))
     router.get('/ranking', (req, res) => {
         axios.get(`/ranking`)
-            .then((r) => res.render('ranking', {data: r.data}))
+            .then((r) => res.render('ranking', {user: req.user, data: r.data}))
     })
-    router.get('/admin/*', testAdmin)
+    router.get('/admin/*', ensureLoggedIn)
 
     app.use('/', router)
     app.use('/admin/sentences', adminSentencesRouter)
@@ -53,7 +48,7 @@ const setupExpress = () => {
     app.use(express.static(path.join(__dirname, '..', '..', 'build')));
 
     app.use((req, res) => {
-        res.render('error', {error: 'No Page.'})
+        res.render('error', {user: req.user, error: 'No Page.'})
     })
 
     const server = http.createServer(app)
