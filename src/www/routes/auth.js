@@ -12,7 +12,7 @@ const setupPassport = () => {
                 if (isSuccess) {
                     return callback(null, username)
                 } else {
-                    return callback(null, false, {message: 'ユーザー名かパスワードが違います'})
+                    return callback(null, false)
                 }
             })
             .catch(e => callback(e))
@@ -29,11 +29,20 @@ const createRouter = () => {
     setupPassport()
     const express = require('express')
     const router = express.Router()
-    router.get('/login', (req, res) => res.render('login'))
-    router.post('/login', passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-    }))
+    router.get('/login', (req, res) => res.render('login', {error: req.flash('error')}))
+    router.post('/login', function(req, res, next) {
+        passport.authenticate('local', function(err, user) {
+            if (err) return next(err)
+            if (!user) {
+                req.flash('error', 'ユーザー名かパスワードが違います')
+                return res.redirect('login')
+            }
+            req.logIn(user, function(err) {
+                if (err) return next(err)
+                return res.redirect('/')
+            })
+        })(req, res, next)
+    })
     router.get('/logout', (req, res, next) => {
         req.logout(err => {
             if (err) return next(err)
