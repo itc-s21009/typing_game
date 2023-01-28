@@ -1,10 +1,14 @@
 const express = require('express')
+const session = require('express-session')
+const SQLiteStore = require('connect-sqlite3')(session)
 const path = require('path')
 const config = require('config')
 const http = require('http')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const axios = require("axios")
+const passport = require('passport')
+const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn()
 
 const setupExpress = () => {
     const testAdmin = (req, res, next) => {
@@ -23,6 +27,14 @@ const setupExpress = () => {
         extended: true
     }))
     app.use(bodyParser.json())
+
+    app.use(session({
+        secret: config.get('secret'),
+        resave: false,
+        saveUninitialized: false,
+        store: new SQLiteStore({db: 'sessions.db', dir: './var/db'})
+    }))
+    app.use(passport.authenticate('session'))
 
     const router = express.Router()
     const adminSentencesRouter = require('./routes/admin/sentences')

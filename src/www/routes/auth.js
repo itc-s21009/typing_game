@@ -1,19 +1,39 @@
 const config = require("config");
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const axios = require("axios").create({baseURL: `${config.get("api-host")}/api`})
+
+const setupPassport = () => {
+    passport.use(new LocalStrategy((username, password, callback) => {
+        axios.post('/login', {username: username, password: password})
+            .then(r => r.data)
+            .then(data => {
+                const isSuccess = data['success']
+                if (isSuccess) {
+                    return callback(null, username)
+                } else {
+                    return callback(null, false, {message: 'ユーザー名かパスワードが違います'})
+                }
+            })
+            .catch(e => callback(e))
+    }))
+    passport.serializeUser((user, callback) => {
+        process.nextTick(() => callback(null, {id: user.id}))
+    })
+    passport.deserializeUser((user, callback) => {
+        process.nextTick(() => callback(null, user))
+    })
+}
+
 const createRouter = () => {
+    setupPassport()
     const express = require('express')
     const router = express.Router()
-    const axios = require("axios").create({baseURL: `${config.get("api-host")}/api`})
     router.get('/login', (req, res) => res.render('login'))
-    router.post('/login', (req, res) => {
-        const {username, password} = req.body
-        axios.post('/login', {username: username, password: password})
-            .then(() => {
-                res.redirect('/')
-            })
-            .catch(e => {
-                res.redirect('/login')
-            })
-    })
+    router.post('/login', passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+    }))
 
     return router
 }

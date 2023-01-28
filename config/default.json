@@ -1,3 +1,4 @@
 {
-  "api-host": ""
+  "api-host": "",
+  "secret": ""
 }
