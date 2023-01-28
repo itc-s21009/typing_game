@@ -8,12 +8,18 @@ html(lang='ja')
     block header
   body.container
     .d-flex.justify-content-between.mt-3
-      h1
-        a(href='/').text-decoration-none.text-primary タイピングゲーム
-      h4
+      div
+        h1
+          a(href='/').text-decoration-none.text-primary タイピングゲーム
+      .text-end.d-flex.align-items-end
         if user
-          p #{user} としてログイン中
+          .container
+            h6 #{user} としてログイン中
+            h6
+              a(href='/logout').text-decoration-none.text-primary ログアウト
         else
-          a(href='/login').text-decoration-none.text-primary ログイン
+          .container
+            h6
+              a(href='/login').text-decoration-none.text-primary ログイン
     hr
     block content
