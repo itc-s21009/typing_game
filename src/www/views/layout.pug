@@ -15,8 +15,11 @@ html(lang='ja')
         if user
           .container
             h6 #{user} としてログイン中
-            h6
-              a(href='/logout').text-decoration-none.text-primary ログアウト
+            .d-flex.justify-content-end
+              h6.me-2
+                a(href='/admin/settings').btn.btn-outline-primary 設定
+              h6
+                a(href='/logout').btn.btn-outline-primary ログアウト
         else
           .container
             h6

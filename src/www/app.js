@@ -36,6 +36,7 @@ const setupExpress = () => {
 
     const router = express.Router()
     const adminSentencesRouter = require('./routes/admin/sentences')
+    const adminSettingsRouter = require('./routes/admin/settings')
     const authRouter = require('./routes/auth')
     console.log(process.env.NODE_ENV)
     app.use((req, res, next) => {
@@ -51,6 +52,7 @@ const setupExpress = () => {
 
     app.use('/', router)
     app.use('/admin/sentences', adminSentencesRouter)
+    app.use('/admin/settings', adminSettingsRouter)
     app.use(authRouter)
     app.use(express.static(path.join(__dirname, '..', '..', 'build')));
 
