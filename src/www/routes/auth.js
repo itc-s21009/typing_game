@@ -10,7 +10,8 @@ const setupPassport = () => {
             .then(data => {
                 const isSuccess = data['success']
                 if (isSuccess) {
-                    return callback(null, id)
+                    const {id, username} = data
+                    return callback(null, {id: id, username: username})
                 } else {
                     return callback(null, false)
                 }
