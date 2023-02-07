@@ -24,6 +24,29 @@ const createRouter = () => {
                 res.redirect('/admin/settings/username')
             })
     })
+    router.post('/password', (req, res) => {
+        const {id, password, newPassword, confirmPassword} = req.body
+        if (newPassword !== confirmPassword) {
+            req.flash('error', '確認用パスワードは新しいパスワードと同じものを入力してください')
+            res.redirect('/admin/settings/password')
+        } else {
+        axios.post('/settings/password', {id: id, password: password, newPassword: newPassword})
+            .then(r => r.data)
+            .then(data => {
+                const isSuccess = data['success']
+                if (isSuccess) {
+                    req.flash('success', 'パスワードを変更しました')
+                } else {
+                    req.flash('error', 'パスワードが違います')
+                }
+                res.redirect('/admin/settings/password')
+            })
+            .catch(e => {
+                req.flash('error', 'エラーが発生しました')
+                res.redirect('/admin/settings/password')
+            })
+        }
+    })
     router.get('/', (req, res) => res.render('settings'))
     router.get('/:pageId', (req, res, next) => {
         const pageId = req.params['pageId']
