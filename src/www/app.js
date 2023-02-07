@@ -36,22 +36,28 @@ const setupExpress = () => {
 
     const router = express.Router()
     const adminSentencesRouter = require('./routes/admin/sentences')
+    const adminSettingsRouter = require('./routes/admin/settings')
     const authRouter = require('./routes/auth')
     console.log(process.env.NODE_ENV)
-    router.get('/', (req, res) => res.render('index', {user: req.user}))
+    app.use((req, res, next) => {
+        res.locals.user = req.user
+        next()
+    })
+    router.get('/', (req, res) => res.render('index'))
     router.get('/ranking', (req, res) => {
         axios.get(`/ranking`)
-            .then((r) => res.render('ranking', {user: req.user, data: r.data}))
+            .then((r) => res.render('ranking', {data: r.data}))
     })
     router.get('/admin/*', ensureLoggedIn)
 
     app.use('/', router)
     app.use('/admin/sentences', adminSentencesRouter)
+    app.use('/admin/settings', adminSettingsRouter)
     app.use(authRouter)
     app.use(express.static(path.join(__dirname, '..', '..', 'build')));
 
     app.use((req, res) => {
-        res.render('error', {user: req.user, error: 'No Page.'})
+        res.render('error', {error: 'No Page.'})
     })
 
     const server = http.createServer(app)

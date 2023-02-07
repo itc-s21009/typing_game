@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .d-flex
+    .col-3
+      .card
+        .card-header 設定
+        .list-group.list-group-flush
+           -
+             const classes = ['list-group-item']
+             const list = [
+               {id: 'username', text: 'ユーザー名変更', classes: [...classes]},
+               {id: 'password', text: 'パスワード変更', classes: [...classes]}
+             ]
+             list.forEach((data) => {
+                 if (data.id === pageId) {
+                     data.classes.push('active')
+                 }
+             })
+           each data in list
+             a(class=data.classes.join(' '), href=`/admin/settings/${data.id}`)= data.text
+    .col-9.ms-5.mt-3
+      block settings_content

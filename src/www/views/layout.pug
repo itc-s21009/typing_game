@@ -14,9 +14,12 @@ html(lang='ja')
       .text-end.d-flex.align-items-end
         if user
           .container
-            h6 #{user} としてログイン中
-            h6
-              a(href='/logout').text-decoration-none.text-primary ログアウト
+            h6 #{user.username} としてログイン中
+            .d-flex.justify-content-end
+              h6.me-2
+                a(href='/admin/settings').btn.btn-outline-primary 設定
+              h6
+                a(href='/logout').btn.btn-outline-primary ログアウト
         else
           .container
             h6

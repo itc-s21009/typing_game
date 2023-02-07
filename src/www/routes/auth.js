@@ -4,13 +4,14 @@ const LocalStrategy = require('passport-local')
 const axios = require("axios").create({baseURL: `${config.get("api-host")}/api`})
 
 const setupPassport = () => {
-    passport.use(new LocalStrategy((username, password, callback) => {
-        axios.post('/login', {username: username, password: password})
+    passport.use(new LocalStrategy((id, password, callback) => {
+        axios.post('/login', {id: id, password: password})
             .then(r => r.data)
             .then(data => {
                 const isSuccess = data['success']
                 if (isSuccess) {
-                    return callback(null, username)
+                    const {id, username} = data
+                    return callback(null, {id: id, username: username})
                 } else {
                     return callback(null, false)
                 }
@@ -31,13 +32,13 @@ const createRouter = () => {
     const router = express.Router()
     router.get('/login', (req, res) => res.render('login', {
         error: req.flash('error'),
-        username: req.flash('username')[0] // [0]がないと、「user」にしたいところがなぜか「["user"]」になってしまう
+        id: req.flash('id')[0] // [0]がないと、「user」にしたいところがなぜか「["user"]」になってしまう
     }))
     router.post('/login', function (req, res, next) {
         passport.authenticate('local', function (err, user) {
             if (err) return next(err)
             if (!user) {
-                req.flash('username', req.body.username)
+                req.flash('id', req.body.username)
                 req.flash('error', 'ユーザー名かパスワードが違います')
                 return res.redirect('login')
             }

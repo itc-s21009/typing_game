@@ -1,0 +1,19 @@
+extends layout_settings
+
+block settings_content
+  .container
+    h3 ユーザー名変更
+    p.text-danger= error
+    p.text-success= success
+    p= `現在のユーザー名：${user.username}`
+    .d-flex.align-items-center.m-auto
+      form(method='post' action='/admin/settings/username')
+        input#username(type='hidden' name='id' value=user.id)
+        .mb-3
+          label.form-label(for='newUsername') 新しいユーザー名
+          input#newUsername.form-control(type='text' name='newUsername' required=true value=username)
+        .mb-3
+          label.form-label(for='password') パスワード
+          input#password.form-control(type='password' name='password' required=true)
+        .mb-3.text-center
+          button.btn.btn-primary.w-100 ユーザー名変更
