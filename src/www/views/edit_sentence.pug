@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  .container.w-50
+  .container.w-50(style='min-width: 200px')
     h1.text-center 文章編集
     form(method='post' action='/admin/sentences/edit')
       input#id(type='hidden' name='id' value=data.id)

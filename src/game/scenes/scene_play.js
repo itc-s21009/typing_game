@@ -232,6 +232,10 @@ const romans = {
     '０': ['0'],
 }
 
+const COLOR_ROMAN = '#505050'
+const COLOR_NEXT_CHAR = '#000080'
+const COLOR_MISS = '#b00000'
+
 export class ScenePlay extends Phaser.Scene {
     text_loading
     text_timer
@@ -422,6 +426,9 @@ export class ScenePlay extends Phaser.Scene {
                     inputForSentence = ''
                     showRandomSentence()
                 }
+                this.text_next_char.setColor(COLOR_NEXT_CHAR)
+            } else {
+                this.text_next_char.setColor(COLOR_MISS)
             }
         }
 
@@ -514,12 +521,12 @@ export class ScenePlay extends Phaser.Scene {
                 .setOrigin(0.5, 1)
                 .setFontSize(28)
                 .setFontFamily('Courier New')
-                .setColor('#505050')
+                .setColor(COLOR_ROMAN)
             this.text_next_char = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
                 .setOrigin(0.5, 1)
                 .setFontSize(28)
                 .setFontFamily('Courier New')
-                .setColor('#000080')
+                .setColor(COLOR_NEXT_CHAR)
             this.text_typed = new CustomText(this, WIDTH / 2, HEIGHT / 2 + 40, '')
                 .setOrigin(0.5, 1)
                 .setFontSize(28)
