@@ -41,6 +41,10 @@ const setupExpress = () => {
     console.log(process.env.NODE_ENV)
     app.use((req, res, next) => {
         res.locals.user = req.user
+        const {token} = req.cookies
+        if (token) {
+            req.headers.authorization = `Bearer ${token}`
+        }
         next()
     })
     router.get('/', (req, res) => res.render('index'))
