@@ -9,16 +9,16 @@ const createRouter = () => {
     })
     router.get('/edit/:id', (req, res) => {
         axios.get(`/sentences?id=${req.params.id}`)
-            .then((r) => res.render('edit_sentence', {data: r.data[0]}))
+            .then((r) => res.render('admin/sentences/edit_sentence', {data: r.data[0]}))
     })
     router.get('/new', (req, res) => {
-        res.render('add_sentence')
+        res.render('admin/sentences/add_sentence')
     })
     router.post('/delete', (req, res) => {
         const {sentence, kana} = req.body
         axios.post('/sentences/delete', req.body, {headers: {Authorization: req.headers.authorization}})
             .then(res => res.data)
-            .then(() => res.render('delete_sentence_complete', {sentence: sentence, kana: kana}))
+            .then(() => res.render('admin/sentences/delete_sentence_complete', {sentence: sentence, kana: kana}))
     })
     router.post('/edit', (req, res) => {
         axios.post('/sentences/edit', req.body, {headers: {Authorization: req.headers.authorization}})
@@ -28,7 +28,7 @@ const createRouter = () => {
         const {sentence, kana} = req.body
         axios.post('/sentences/register', req.body, {headers: {Authorization: req.headers.authorization}})
             .then(res => res.data)
-            .then(() => res.render('add_sentence_complete', {sentence: sentence, kana: kana}))
+            .then(() => res.render('admin/sentences/add_sentence_complete', {sentence: sentence, kana: kana}))
     })
     return router
 }

@@ -15,7 +15,7 @@ const createRouter = () => {
     setupPassport()
     const express = require('express')
     const router = express.Router()
-    router.get('/login', (req, res) => res.render('login', {
+    router.get('/login', (req, res) => res.render('admin/login', {
         error: req.flash('error'),
         id: req.flash('id')[0] // [0]がないと、「user」にしたいところがなぜか「["user"]」になってしまう
     }))
@@ -46,7 +46,7 @@ const createRouter = () => {
         req.logout(err => {
             if (err) return next(err)
             res.locals.user = undefined
-            res.render('logout')
+            res.render('admin/logout')
         })
     })
 
