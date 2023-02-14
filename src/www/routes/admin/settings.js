@@ -6,7 +6,8 @@ const createRouter = () => {
 
     router.post('/username', (req, res) => {
         const {id, password, newUsername} = req.body
-        axios.post('/settings/username', {id: id, password: password, newUsername: newUsername})
+        axios.post('/settings/username', {id: id, password: password, newUsername: newUsername},
+            {headers: {Authorization: req.headers.authorization}})
             .then(r => r.data)
             .then(data => {
                 const isSuccess = data['success']
@@ -30,21 +31,22 @@ const createRouter = () => {
             req.flash('error', '確認用パスワードは新しいパスワードと同じものを入力してください')
             res.redirect('/admin/settings/password')
         } else {
-        axios.post('/settings/password', {id: id, password: password, newPassword: newPassword})
-            .then(r => r.data)
-            .then(data => {
-                const isSuccess = data['success']
-                if (isSuccess) {
-                    req.flash('success', 'パスワードを変更しました')
-                } else {
-                    req.flash('error', 'パスワードが違います')
-                }
-                res.redirect('/admin/settings/password')
-            })
-            .catch(e => {
-                req.flash('error', 'エラーが発生しました')
-                res.redirect('/admin/settings/password')
-            })
+            axios.post('/settings/password', {id: id, password: password, newPassword: newPassword},
+                {headers: {Authorization: req.headers.authorization}})
+                .then(r => r.data)
+                .then(data => {
+                    const isSuccess = data['success']
+                    if (isSuccess) {
+                        req.flash('success', 'パスワードを変更しました')
+                    } else {
+                        req.flash('error', 'パスワードが違います')
+                    }
+                    res.redirect('/admin/settings/password')
+                })
+                .catch(e => {
+                    req.flash('error', 'エラーが発生しました')
+                    res.redirect('/admin/settings/password')
+                })
         }
     })
     router.get('/', (req, res) => res.render('settings'))
