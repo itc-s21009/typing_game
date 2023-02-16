@@ -3,10 +3,14 @@ block content
   .container.d-flex.align-items-start
     .row.col-2(style='min-width: 200px')
       p
-        a(href='./ranking') ランキングページ
+        a(href='./ranking')
+          img(src='./image/ranking.png' alt='' )
       if user
         p
-          a(href='./admin/sentences') 文章一覧ページ
+          a(href='./admin/sentences')
+            img(src='./image/list.png' alt='')
+      a(href='http://s21025.pythonanywhere.com/')
+        img(src='./image/ogiri.png' alt='' )
     .row.col-10
       #game.text-center
 block header
