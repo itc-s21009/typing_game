@@ -49,10 +49,10 @@ const createRouter = () => {
                 })
         }
     })
-    router.get('/', (req, res) => res.render('settings'))
+    router.get('/', (req, res) => res.render('admin/settings'))
     router.get('/:pageId', (req, res, next) => {
         const pageId = req.params['pageId']
-        res.render(pageId, {
+        res.render(`admin/settings/${pageId}`, {
             pageId: pageId,
             error: req.flash('error'),
             success: req.flash('success'),
