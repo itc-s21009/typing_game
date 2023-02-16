@@ -1,0 +1,55 @@
+.header {
+    background-color: #8e9dfa;
+    margin-bottom: 20px;
+    padding: 10px 100px 10px 30px;
+}
+
+.title {
+    margin-left: 20px;
+    text-decoration: none;
+    color: blue;
+}
+
+.topmenu {
+    display: flex;
+    word-break: keep-all;
+}
+
+.topmenu > div > a {
+    margin-bottom: 0;
+}
+
+.topmenu > div{
+    margin-right: 20px;
+}
+
+.topmenu > div:last-child{
+    margin-right: 0;
+}
+
+.topmenu > .buttons {
+    display: flex;
+    margin-left: auto;
+}
+
+.topmenu > .buttons > a {
+    border: #485ef6 2px solid;
+    padding: 10px;
+    margin-right: 20px;
+    text-decoration: none;
+    margin-top: auto;
+    margin-bottom: auto;
+    transition: 0.5s;
+    border-radius: 20px;
+}
+
+.topmenu > .buttons > a:last-child {
+    margin-right: 0;
+}
+
+.topmenu > .buttons > a:hover {
+    background-color: #485ef6;
+    color: #cacaca;
+    font-weight: bold;
+    transition: 0.5s;
+}
