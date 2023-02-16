@@ -1,37 +1,4 @@
 extends ../layouts/layout
 
 block content
-  h2.ms-2 文章一覧
-  .d-flex.justify-content-between
-    div
-      select.update-order.form-select.w-auto(name='order' data-sentences=data data-page=page)
-        each display, id in {'new':'新しい順', 'old':'古い順', 'long':'文字数が長い順', 'short':'文字数が短い順'}
-          option(selected=(id === order) value=id)=display
-    .d-flex.justify-content-center
-      a.page-prev.btn.btn-primary(href='javascript:void(0)' data-sentences=data data-page=page data-limit=limit) <<
-      h3.me-3.ms-3=`${page} ページ目`
-      a.page-next.btn.btn-primary(href='javascript:void(0)' data-sentences=data data-page=page data-limit=limit) >>
-    .d-flex.justify-content-end
-      p.me-2.mb-0.m-auto 最大
-      select.update-limit.form-select.w-auto(name='limit' data-sentences=data data-page=page)
-        each value in ['10', '20', '30', '40', '50']
-          option(selected=(value === limit) value=value)=value
-      p.ms-2.me-3.mb-0.m-auto 件表示
-      a.btn.btn-outline-primary(href='/admin/sentences/new') 文章追加
-  table.table.table-hover
-    thead
-      tr
-        th 文章
-        th かな
-        th 編集
-        th 削除
-    tbody
-        each item in dataToDisplay
-          tr.align-middle
-            td(style="width: 50%;")=item.sentence
-            td(style="width: 50%;")=item.kana
-            td(style="min-width: 74px;")
-              a.btn.btn-outline-primary(href=`/admin/sentences/edit/${item.id}`) 編集
-            td(style="min-width: 74px;")
-              a.del-link.btn.btn-outline-danger(href='javascript:void(0)' data-id=item.id data-sentence=item.sentence data-kana=item.kana) 削除
-  script(src='/js/sentences.js')
+  #admin-sentences

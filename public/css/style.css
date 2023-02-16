@@ -1,5 +1,9 @@
+body {
+    background: #eee;
+}
+
 .header {
-    background-color: #8e9dfa;
+    background-color: #026b00;
     margin-bottom: 20px;
     padding: 10px 100px 10px 30px;
 }
@@ -7,7 +11,13 @@
 .title {
     margin-left: 20px;
     text-decoration: none;
-    color: blue;
+    color: #cacaca;
+    transition: 0.5s;
+}
+
+.title:hover {
+    color: #fdfd01;
+    transition: 0.5s;
 }
 
 .topmenu {
@@ -41,6 +51,7 @@
     margin-bottom: auto;
     transition: 0.5s;
     border-radius: 20px;
+    background-color: #cacaca;
 }
 
 .topmenu > .buttons > a:last-child {
@@ -51,5 +62,23 @@
     background-color: #485ef6;
     color: #cacaca;
     font-weight: bold;
+    transition: 0.5s;
+}
+
+.user-area {
+    color: white;
+}
+
+canvas {
+    border: black 2px solid;
+}
+
+img {
+    width: 100%;
+    transition: 0.5s;
+}
+
+img:hover {
+    margin-left: 5px;
     transition: 0.5s;
 }
