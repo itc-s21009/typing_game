@@ -1,7 +1,7 @@
 extends layouts/layout
 block content
   .d-flex.align-items-start.text-center
-    .col-2(style='min-width: 200px')
+    .col-2(style='min-width: 200px').left-menu
       p
         a(href='./ranking')
           img(src='./image/ranking.png' alt='' )
@@ -11,7 +11,7 @@ block content
             img(src='./image/list.png' alt='')
     .col-8
       #game.text-center
-    .col-2
+    .col-2.ad
       a(href='http://s21025.pythonanywhere.com/')
         img(src='./image/ogiri.png' alt='')
 block header
