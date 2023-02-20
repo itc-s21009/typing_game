@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack && dotenv -e .env.production react-scripts build",
     "build:dev": "webpack && dotenv -e .env.development react-scripts build",
+    "webpack": "webpack",
     "start": "node ./src/www/app.js",
     "start:dev": "nodemon ./src/www/app.js"
   },

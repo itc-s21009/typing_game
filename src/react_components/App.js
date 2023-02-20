@@ -63,7 +63,8 @@ const App = () => {
                 </td>
                 <td style={{minWidth: '74px'}}>
                     <button className="del-link btn btn-outline-danger"
-                       onClick={() => confirmDelete(d.id, d.sentence, d.kana)}>削除</button>
+                            onClick={() => confirmDelete(d.id, d.sentence, d.kana)}>削除
+                    </button>
                 </td>
             </tr>
         )
@@ -96,7 +97,7 @@ const App = () => {
         }
     }
     return (
-        <>
+        <div style={{margin: '0 30px'}}>
             <h2 className="ms-2">文章一覧</h2>
             <div className="d-flex justify-content-between">
                 <div>
@@ -125,7 +126,7 @@ const App = () => {
                 </div>
             </div>
             <ShowTable/>
-        </>
+        </div>
     )
 }
 
