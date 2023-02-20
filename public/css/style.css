@@ -73,12 +73,24 @@ canvas {
     border: black 2px solid;
 }
 
-img {
-    width: 100%;
+.left-menu > p > a > img {
     transition: 0.5s;
 }
 
-img:hover {
-    margin-left: 5px;
+.left-menu > p > a > img:hover {
+    margin-left: 10px;
     transition: 0.5s;
+}
+
+.ad > a > img {
+    opacity: 0;
+    margin-top: 50px;
+    animation: late-open 1s ease-in 1.5s forwards;
+}
+
+@keyframes late-open {
+    to {
+        margin-top: 0;
+        opacity: 100%;
+    }
 }
