@@ -243,7 +243,6 @@ export class ScenePlay extends Phaser.Scene {
     text_roman
     text_next_char
     text_typed
-    text_stats
 
     constructor() {
         super({key: SCENE_PLAY});
@@ -321,10 +320,6 @@ export class ScenePlay extends Phaser.Scene {
             const keysPerSecond = Math.round(correctCount / (time_start - time) * 10) / 10
             const score = Math.round(correctCount * keysPerSecond * (accuracy / 100))
             return {miss: miss, accuracy: accuracy, keysPerSecond: keysPerSecond, score: score}
-        }
-        const updateStats = () => {
-            const {miss, accuracy, keysPerSecond, score} = getCalculatedStats()
-            this.text_stats.text = `(後で消す)\nミス数: ${miss}\n正確率: ${accuracy}%\nキー/秒: ${keysPerSecond}\nスコア: ${score}`
         }
 
         /**
@@ -467,7 +462,6 @@ export class ScenePlay extends Phaser.Scene {
                             updateDisplayedText(nextChar.roman[0])
                             // 正しい入力としてカウントする
                             correctCount++
-                            updateStats()
                             // 「っ」の判定の場合は、一旦処理を止める
                             return
                         }
@@ -493,7 +487,6 @@ export class ScenePlay extends Phaser.Scene {
                 }
             }
             attemptToType(d.roman, e.key)
-            updateStats()
         })
         const showRandomSentence = () => {
             // キューが空になったら、新しくランダムな順番で補充する
@@ -535,13 +528,10 @@ export class ScenePlay extends Phaser.Scene {
                 .setOrigin(0.5, 1)
                 .setFontSize(28)
                 .setFontFamily('MS UI Gothic')
-            this.text_stats = new CustomText(this, 0, HEIGHT - 180, '')
-                .setFontSize(32)
             this.add.existing(this.text_roman)
             this.add.existing(this.text_next_char)
             this.add.existing(this.text_typed)
             this.add.existing(this.text_display)
-            this.add.existing(this.text_stats)
         }
         const startTimer = () => {
             const timer_task = () => {
@@ -556,7 +546,6 @@ export class ScenePlay extends Phaser.Scene {
                     })
                 } else {
                     this.text_timer.text = `残り${time}秒`
-                    updateStats()
                 }
                 time--
             }
@@ -568,6 +557,5 @@ export class ScenePlay extends Phaser.Scene {
         createTimer()
         startTimer()
         showRandomSentence()
-        updateStats()
     }
 }

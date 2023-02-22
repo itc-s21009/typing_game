@@ -2,23 +2,23 @@ extends layouts/layout
 
 block content
   h3.text-center ランキング
-  table.table
+  table.table.table-striped
     thead
       tr
-        th.text-nowrap 順位
-        th.text-nowrap プレイヤー名
-        th.text-nowrap スコア
-        th.text-nowrap キー/秒
-        th.text-nowrap ミス数
-        th.text-nowrap 正確率 (%)
-        th.text-nowrap 更新日時
+        th.text-center.text-nowrap 順位
+        th.text-center.text-nowrap プレイヤー名
+        th.text-center.text-nowrap スコア
+        th.text-center.text-nowrap キー/秒
+        th.text-center.text-nowrap ミス数
+        th.text-center.text-nowrap 正確率 (%)
+        th.text-center.text-nowrap 更新日時
     tbody
       each item in data
         tr
-          td #{item.place}位
-          td= item.name
-          td= item.score
-          td= item.kps
-          td= item.miss
-          td= item.accuracy
-          td= item.updated_at
+          td.text-center #{item.place}位
+          td.text-center= item.name
+          td.text-center= item.score
+          td.text-center= item.kps
+          td.text-center= item.miss
+          td.text-center= item.accuracy
+          td.text-center= new Date(item.updated_at).toLocaleString()
