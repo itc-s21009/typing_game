@@ -299,7 +299,7 @@ export class ScenePlay extends Phaser.Scene {
 
     startGame(sentences, isDebug) {
         let timer_id
-        const time_start = isDebug ? 5 : 60
+        const time_start = isDebug ? 30 : 60
         let time = time_start
         this.input.keyboard.on('keydown', (e) => {
             if (e.key === 'Escape') {
