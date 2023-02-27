@@ -11,8 +11,16 @@ git clone https://github.com/itc-s21009/typing_game.git
 cd typing_game
 # 必要なパッケージをダウンロードする
 npm i
-# 公開するファイルをビルドする
+# 公開する静的ファイルをビルドする
 npm run build
-# 起動する
-npm run start
 ```
+下記の設定が終わったら、起動してください。
+```
+npm start
+```
+## 設定
+### config
+* `api-host`: [タイピングゲームAPI](https://github.com/itc-s21009/typing_game_server)がホストされているURLを書きます。
+* `secret`: セッションIDを生成したりするための秘密鍵の値を適当に入れます。
+### .env
+* `REACT_APP_API_HOST`: [タイピングゲームAPI](https://github.com/itc-s21009/typing_game_server)がホストされているURLを書きます。
